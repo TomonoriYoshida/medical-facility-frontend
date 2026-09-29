@@ -1,0 +1,52 @@
+import Link from "next/link";
+import type { PaginationMeta } from "@/lib/api/types";
+import { numberFormatter } from "@/lib/format";
+
+type Props = {
+  meta: PaginationMeta;
+  hrefForPage: (page: number) => string;
+};
+
+export function ResultSummary({ meta }: { meta: PaginationMeta }) {
+  if (meta.total === 0) {
+    return null;
+  }
+  return (
+    <p className="text-sm text-muted">
+      全 <span className="font-semibold text-foreground">{numberFormatter.format(meta.total)}</span> 件中{" "}
+      {numberFormatter.format(meta.from ?? 0)}〜{numberFormatter.format(meta.to ?? 0)} 件を表示
+    </p>
+  );
+}
+
+export default function Pagination({ meta, hrefForPage }: Props) {
+  if (meta.last_page <= 1) {
+    return null;
+  }
+
+  const linkClass =
+    "rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-surface";
+  const disabledClass = "rounded-lg border border-border px-4 py-2 text-sm text-muted opacity-50";
+
+  return (
+    <nav aria-label="ページ送り" className="mt-8 flex items-center justify-between gap-4">
+      {meta.current_page > 1 ? (
+        <Link href={hrefForPage(meta.current_page - 1)} className={linkClass}>
+          ← 前へ
+        </Link>
+      ) : (
+        <span className={disabledClass}>← 前へ</span>
+      )}
+      <span className="text-sm text-muted">
+        {numberFormatter.format(meta.current_page)} / {numberFormatter.format(meta.last_page)} ページ
+      </span>
+      {meta.current_page < meta.last_page ? (
+        <Link href={hrefForPage(meta.current_page + 1)} className={linkClass}>
+          次へ →
+        </Link>
+      ) : (
+        <span className={disabledClass}>次へ →</span>
+      )}
+    </nav>
+  );
+}
