@@ -21,6 +21,16 @@ const filterKeys = [
   "sort",
 ] as const;
 
+/**
+ * Institution types (App\Enums\InstitutionType) whose departments can't narrow
+ * a search: 薬局 has none, and 歯科診療所 are nearly all 歯科.
+ */
+const typesWithoutDepartmentFilter = ["3", "4"];
+
+function hasDepartmentFilter(institutionType: string | null): boolean {
+  return !typesWithoutDepartmentFilter.includes(institutionType ?? "");
+}
+
 const sortOptions = [
   { value: "", label: "標準（コード順）" },
   { value: "-designated_on", label: "指定年月日が新しい順" },
@@ -37,6 +47,10 @@ function toApiQuery(searchParams: URLSearchParams): FacilityListQuery & { page?:
         ? Number(value)
         : value;
     }
+  }
+  // Otherwise a hidden department filter would silently empty the results.
+  if (!hasDepartmentFilter(searchParams.get("institution_type"))) {
+    delete query.department_category;
   }
   const page = Number(searchParams.get("page"));
   if (Number.isInteger(page) && page > 1) {
@@ -58,6 +72,10 @@ export default function FacilitySearch() {
         params.set(key, value.trim());
       }
     }
+    // The department select is still in the form when the type changes to one without it.
+    if (!hasDepartmentFilter(params.get("institution_type"))) {
+      params.delete("department_category");
+    }
     const queryString = params.toString();
     router.push(queryString ? `/?${queryString}` : "/");
   }
@@ -73,9 +91,9 @@ export default function FacilitySearch() {
     return `/?${params.toString()}`;
   }
 
-  const selectClass =
-    "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm disabled:opacity-50";
+  const selectClass = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
   const optionsData = options.data;
+  const showsDepartmentFilter = hasDepartmentFilter(searchParams.get("institution_type"));
 
   return (
     <>
@@ -125,17 +143,19 @@ export default function FacilitySearch() {
             className={selectClass}
             onChange={search}
           />
-          <FilterSelect
-            name="department_category"
-            label="診療科"
-            defaultValue={searchParams.get("department_category")}
-            options={optionsData?.department_categories.map((d) => ({
-              value: String(d.code),
-              label: d.label,
-            }))}
-            className={selectClass}
-            onChange={search}
-          />
+          {showsDepartmentFilter && (
+            <FilterSelect
+              name="department_category"
+              label="診療科"
+              defaultValue={searchParams.get("department_category")}
+              options={optionsData?.department_categories.map((d) => ({
+                value: String(d.code),
+                label: d.label,
+              }))}
+              className={selectClass}
+              onChange={search}
+            />
+          )}
           <FilterSelect
             name="status"
             label="指定状態"
