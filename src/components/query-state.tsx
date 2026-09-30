@@ -13,10 +13,7 @@ export function ErrorState({ error }: { error: unknown }) {
     error instanceof ApiError ? error.message : "予期しないエラーが発生しました。";
 
   return (
-    <div
-      role="alert"
-      className="rounded-xl border border-danger/40 px-4 py-6 text-center text-sm text-danger"
-    >
+    <div role="alert" className="border border-danger px-4 py-6 text-center text-sm text-danger">
       {message}
     </div>
   );
@@ -24,7 +21,7 @@ export function ErrorState({ error }: { error: unknown }) {
 
 export function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-dashed border-border px-4 py-12 text-center text-sm text-muted">
+    <div className="border border-border bg-surface px-4 py-10 text-center text-sm text-muted">
       {children}
     </div>
   );

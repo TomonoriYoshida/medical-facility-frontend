@@ -57,12 +57,13 @@ export default function EventFeed() {
     return `/events?${params.toString()}`;
   }
 
-  const selectClass = "rounded-lg border border-border bg-background px-3 py-2 text-sm";
+  const selectClass =
+    "rounded-sm border border-border bg-background px-2 py-1.5 text-sm focus:border-accent focus:outline-none";
   const activeEventType = searchParams.get("event_type") ?? "";
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 border border-border bg-surface p-3">
         <div role="group" aria-label="変化の種類" className="flex flex-wrap gap-1">
           {[{ code: "", label: "すべて" }, ...(optionsData?.event_types ?? [])].map((type) => {
             const value = String(type.code);
@@ -73,10 +74,10 @@ export default function EventFeed() {
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => setFilter("event_type", value)}
-                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                className={`rounded-sm border px-3 py-1 text-sm transition-colors ${
                   isActive
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border hover:bg-surface"
+                    ? "border-navy bg-navy font-bold text-white"
+                    : "border-border bg-background hover:border-accent hover:text-accent"
                 }`}
               >
                 {type.label}
@@ -140,7 +141,7 @@ export default function EventFeed() {
                   <br />
                   <Link
                     href="/?designation_reason=新規&sort=-designated_on"
-                    className="mt-3 inline-block text-accent hover:underline"
+                    className="mt-3 inline-block text-accent underline underline-offset-2 hover:opacity-80"
                   >
                     指定年月日が新しい「新規」の施設を見る →
                   </Link>

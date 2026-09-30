@@ -7,30 +7,33 @@ import type { Attribution } from "@/lib/api/types";
  */
 export default function AttributionNotice({ attribution }: { attribution: Attribution }) {
   return (
-    <aside className="mt-12 rounded-xl border border-border bg-surface p-5 text-xs leading-6 text-muted">
-      <p>{attribution.notice}</p>
-      <p>
-        ライセンス:{" "}
-        <a
-          href={attribution.license.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline hover:text-foreground"
-        >
-          {attribution.license.name}
-        </a>
-      </p>
-      <p>{attribution.disclaimer}</p>
-      <details className="mt-2">
-        <summary className="cursor-pointer hover:text-foreground">出典（各地方厚生局）</summary>
-        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+    <aside className="mt-12 border-t-2 border-accent pt-3 text-xs leading-6 text-muted">
+      <p className="font-bold text-accent">データの出典</p>
+      <ul className="mt-1 list-disc space-y-0.5 pl-5">
+        <li>{attribution.notice}</li>
+        <li>
+          ライセンス：
+          <a
+            href={attribution.license.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline underline-offset-2"
+          >
+            {attribution.license.name}
+          </a>
+        </li>
+        <li>{attribution.disclaimer}</li>
+      </ul>
+      <details className="mt-1">
+        <summary className="cursor-pointer text-accent">出典元（各地方厚生局）</summary>
+        <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1 pl-5">
           {attribution.sources.map((source) => (
             <li key={source.url}>
               <a
                 href={source.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline hover:text-foreground"
+                className="text-accent underline underline-offset-2"
               >
                 {source.bureau}
               </a>

@@ -38,7 +38,7 @@ function FileLink({ file }: { file?: ExportFile }) {
     return <span className="text-muted">—</span>;
   }
   return (
-    <a href={file.url} className="text-accent hover:underline" download>
+    <a href={file.url} className="text-accent underline underline-offset-2 hover:opacity-80" download>
       {file.format.toUpperCase()}
       <span className="ml-1 text-xs text-muted">{formatBytes(file.size)}</span>
     </a>
@@ -67,29 +67,27 @@ export default function ExportList() {
         データ更新日: {formatDate(exports.data.data.data_updated_at)}
         （ファイル作成: {formatDate(exports.data.data.generated_at)}）
       </p>
-      <div className="mt-3 max-h-112 overflow-auto rounded-xl border border-border">
-        <table className="w-full text-left text-sm">
-          <thead className="sticky top-0 bg-surface text-xs text-muted">
+      <div className="mt-3 max-h-112 overflow-auto">
+        <table className="data-table">
+          <thead className="sticky top-0">
             <tr>
-              <th className="px-4 py-2 font-normal">都道府県</th>
-              <th className="px-4 py-2 text-right font-normal">施設数</th>
-              <th className="px-4 py-2 font-normal">CSV</th>
-              <th className="px-4 py-2 font-normal">JSON Lines</th>
+              <th>都道府県</th>
+              <th>施設数</th>
+              <th>CSV</th>
+              <th>JSON Lines</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody>
             {rows.map((row) => (
-              <tr key={row.code} className={row.code === nationwideCode ? "font-semibold" : undefined}>
-                <th scope="row" className="px-4 py-2 font-medium">
+              <tr key={row.code} className={row.code === nationwideCode ? "font-bold" : undefined}>
+                <th scope="row" className={row.code === nationwideCode ? "font-bold" : undefined}>
                   {row.label}
                 </th>
-                <td className="px-4 py-2 text-right tabular-nums">
-                  {numberFormatter.format(row.records)}
-                </td>
-                <td className="px-4 py-2">
+                <td className="text-right tabular-nums">{numberFormatter.format(row.records)}</td>
+                <td>
                   <FileLink file={row.csv} />
                 </td>
-                <td className="px-4 py-2">
+                <td>
                   <FileLink file={row.jsonl} />
                 </td>
               </tr>
@@ -97,8 +95,8 @@ export default function ExportList() {
           </tbody>
         </table>
       </div>
-      <p className="mt-2 text-xs text-muted">
-        ダウンロードは同じIPアドレスから1時間あたりの回数に上限があります。
+      <p className="mt-1 text-xs text-muted">
+        ※ ダウンロードは同じIPアドレスから1時間あたりの回数に上限があります。
       </p>
       <AttributionNotice attribution={exports.data.meta.attribution} />
     </>

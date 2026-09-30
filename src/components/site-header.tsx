@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/", label: "施設検索" },
-  { href: "/events", label: "変更履歴" },
+  { href: "/events", label: "新規・廃止・変更" },
   { href: "/about", label: "APIについて" },
 ] as const;
 
@@ -13,10 +13,10 @@ export default function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="border-b border-border">
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 py-4 sm:px-6">
-        <Link href="/" className="font-semibold tracking-tight">
-          <span className="mr-2 font-mono text-sm text-accent">API Demo</span>
+    <header className="bg-navy text-white">
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
+        <Link href="/" className="font-bold tracking-tight">
+          <span className="mr-2 font-mono text-xs font-normal text-white/70">API Demo</span>
           医療施設マスタ検索
         </Link>
         <nav>
@@ -32,10 +32,10 @@ export default function SiteHeader() {
                   <Link
                     href={item.href}
                     aria-current={isActive ? "page" : undefined}
-                    className={`rounded-lg px-3 py-2 transition-colors ${
+                    className={`block border-b-2 px-3 py-1.5 transition-colors ${
                       isActive
-                        ? "bg-surface font-medium text-foreground"
-                        : "text-muted hover:text-foreground"
+                        ? "border-white font-bold text-white"
+                        : "border-transparent text-white/75 hover:text-white"
                     }`}
                   >
                     {item.label}

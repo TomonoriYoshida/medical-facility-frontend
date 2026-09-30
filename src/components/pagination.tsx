@@ -13,7 +13,7 @@ export function ResultSummary({ meta }: { meta: PaginationMeta }) {
   }
   return (
     <p className="text-sm text-muted">
-      全 <span className="font-semibold text-foreground">{numberFormatter.format(meta.total)}</span> 件中{" "}
+      全 <span className="font-bold text-accent">{numberFormatter.format(meta.total)}</span> 件中{" "}
       {numberFormatter.format(meta.from ?? 0)}〜{numberFormatter.format(meta.to ?? 0)} 件を表示
     </p>
   );
@@ -25,8 +25,8 @@ export default function Pagination({ meta, hrefForPage }: Props) {
   }
 
   const linkClass =
-    "rounded-lg border border-border px-4 py-2 text-sm transition-colors hover:bg-surface";
-  const disabledClass = "rounded-lg border border-border px-4 py-2 text-sm text-muted opacity-50";
+    "rounded-sm border border-accent px-4 py-1.5 text-sm font-bold text-accent transition-colors hover:bg-band";
+  const disabledClass = "rounded-sm border border-border px-4 py-1.5 text-sm text-muted opacity-60";
 
   return (
     <nav aria-label="ページ送り" className="mt-8 flex items-center justify-between gap-4">

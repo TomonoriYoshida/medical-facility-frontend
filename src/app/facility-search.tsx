@@ -31,6 +31,8 @@ function hasDepartmentFilter(institutionType: string | null): boolean {
   return !typesWithoutDepartmentFilter.includes(institutionType ?? "");
 }
 
+const labelClass = "block text-xs font-bold text-accent";
+
 const sortOptions = [
   { value: "", label: "標準（コード順）" },
   { value: "-designated_on", label: "指定年月日が新しい順" },
@@ -91,7 +93,8 @@ export default function FacilitySearch() {
     return `/?${params.toString()}`;
   }
 
-  const selectClass = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
+  const selectClass =
+    "mt-1 w-full rounded-sm border border-border bg-background px-2 py-1.5 text-sm focus:border-accent focus:outline-none";
   const optionsData = options.data;
   const showsDepartmentFilter = hasDepartmentFilter(searchParams.get("institution_type"));
 
@@ -102,13 +105,13 @@ export default function FacilitySearch() {
         // and once options arrive so the selects' defaultValue can match them.
         key={`${searchParams.toString()}|${optionsData ? "ready" : "loading"}`}
         onSubmit={handleSubmit}
-        className="rounded-xl border border-border bg-surface p-4 sm:p-5"
+        className="border border-border bg-surface p-4 sm:p-5"
         role="search"
       >
-        <div className="flex gap-2">
-          <label htmlFor="q" className="sr-only">
-            キーワード
-          </label>
+        <label htmlFor="q" className={labelClass}>
+          キーワード
+        </label>
+        <div className="mt-1 flex gap-2">
           <input
             id="q"
             name="q"
@@ -116,17 +119,17 @@ export default function FacilitySearch() {
             defaultValue={searchParams.get("q") ?? ""}
             placeholder="施設名・住所の一部（例: 札幌眼科、髙島）"
             maxLength={255}
-            className="min-w-0 flex-1 rounded-lg border border-border bg-background px-3 py-2"
+            className="min-w-0 flex-1 rounded-sm border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-foreground px-5 py-2 text-sm font-medium text-background transition-opacity hover:opacity-80"
+            className="rounded-sm bg-navy px-6 py-2 text-sm font-bold text-white transition-opacity hover:opacity-85"
           >
             検索
           </button>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-3">
+        <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 md:grid-cols-3">
           <FilterSelect
             name="prefecture_code"
             label="都道府県"
@@ -173,7 +176,7 @@ export default function FacilitySearch() {
             onChange={search}
           />
           <div>
-            <label htmlFor="sort" className="sr-only">
+            <label htmlFor="sort" className={labelClass}>
               並び順
             </label>
             <select
@@ -249,7 +252,7 @@ type FilterSelectProps = {
 function FilterSelect({ name, label, defaultValue, options, className, onChange }: FilterSelectProps) {
   return (
     <div>
-      <label htmlFor={name} className="sr-only">
+      <label htmlFor={name} className={labelClass}>
         {label}
       </label>
       <select
@@ -259,7 +262,7 @@ function FilterSelect({ name, label, defaultValue, options, className, onChange 
         onChange={(event) => event.currentTarget.form && onChange(event.currentTarget.form)}
         className={className}
       >
-        <option value="">{label}：すべて</option>
+        <option value="">すべて</option>
         {/* Until options load, keep the URL's value in the form so a submit doesn't drop it. */}
         {options
           ? options.map((option) => (

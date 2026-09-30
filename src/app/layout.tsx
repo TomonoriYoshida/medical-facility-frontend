@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import SiteHeader from "@/components/site-header";
 import Providers from "./providers";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSansJp = Noto_Sans_JP({
+  variable: "--font-noto-sans-jp",
+  weight: ["400", "700"],
   subsets: ["latin"],
+  // The Japanese glyphs come in many unicode-range files; preloading all of them would be wasteful.
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
@@ -30,26 +33,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ja"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${notoSansJp.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Providers>
           <SiteHeader />
-          <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+          <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
             {children}
           </main>
-          <footer className="border-t border-border">
-            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-muted sm:px-6">
+          <footer className="border-t border-border bg-surface">
+            <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-sm text-muted sm:px-6">
               <p>医療施設マスタAPIのデモアプリケーションです。</p>
               <div className="flex gap-4">
-                <a href={hubUrl} className="hover:text-foreground">
+                <a href={hubUrl} className="text-accent underline underline-offset-2 hover:opacity-80">
                   ポートフォリオ
                 </a>
                 <a
                   href={repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-foreground"
+                  className="text-accent underline underline-offset-2 hover:opacity-80"
                 >
                   GitHub ↗
                 </a>

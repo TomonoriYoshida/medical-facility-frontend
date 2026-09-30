@@ -8,9 +8,9 @@ const eventTypeRemoved = 2;
 const originBaseline = 1;
 
 const eventTypeStyles: Record<number, string> = {
-  1: "border-accent/40 text-accent",
-  2: "border-danger/40 text-danger",
-  3: "border-border text-foreground",
+  1: "border-accent text-accent",
+  2: "border-danger text-danger",
+  3: "border-muted text-muted",
 };
 
 function eventTitle(event: MedicalFacilityEvent): string {
@@ -35,28 +35,31 @@ export default function EventItem({
   showFacility?: boolean;
 }) {
   return (
-    <article className="rounded-xl border border-border p-5">
+    <article className="border border-border px-4 py-3 sm:px-5 sm:py-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <span
-          className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+          className={`rounded-sm border px-2 py-0.5 text-xs font-bold ${
             eventTypeStyles[event.event_type.code] ?? eventTypeStyles[3]
           }`}
         >
           {event.event_type.label}
         </span>
-        <span className="text-sm font-medium">{eventTitle(event)}</span>
+        <span className="text-sm font-bold">{eventTitle(event)}</span>
         <time dateTime={event.occurred_on} className="text-sm text-muted">
           {formatDate(event.occurred_on)} 公開分
         </time>
       </div>
 
       {showFacility && event.facility && (
-        <p className="mt-3">
-          <Link href={`/facility?id=${event.facility.id}`} className="font-semibold hover:underline">
+        <p className="mt-2">
+          <Link
+            href={`/facility?id=${event.facility.id}`}
+            className="font-bold text-accent underline-offset-2 hover:underline"
+          >
             {event.facility.name}
           </Link>
           <span className="ml-2 text-sm text-muted">
-            {event.facility.institution_type.label} ・ {event.facility.prefecture.label}
+            {event.facility.institution_type.label} ／ {event.facility.prefecture.label}
             {event.facility.address}
           </span>
         </p>
@@ -64,24 +67,22 @@ export default function EventItem({
 
       {event.changes && event.changes.length > 0 && (
         <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-md text-left text-sm">
-            <thead className="text-xs text-muted">
+          <table className="data-table min-w-md">
+            <thead>
               <tr>
-                <th className="py-1 pr-4 font-normal">項目</th>
-                <th className="py-1 pr-4 font-normal">変更前</th>
-                <th className="py-1 font-normal">変更後</th>
+                <th>項目</th>
+                <th>変更前</th>
+                <th>変更後</th>
               </tr>
             </thead>
             <tbody>
               {event.changes.map((change) => (
-                <tr key={change.attribute} className="border-t border-border align-top">
-                  <th scope="row" className="py-2 pr-4 font-medium whitespace-nowrap">
-                    {attributeLabel(change.attribute)}
-                  </th>
-                  <td className="py-2 pr-4 text-muted">
+                <tr key={change.attribute}>
+                  <th scope="row">{attributeLabel(change.attribute)}</th>
+                  <td className="text-muted">
                     <del className="no-underline">{formatChangeValue(change.old)}</del>
                   </td>
-                  <td className="py-2">
+                  <td>
                     <ins className="no-underline">{formatChangeValue(change.new)}</ins>
                   </td>
                 </tr>
