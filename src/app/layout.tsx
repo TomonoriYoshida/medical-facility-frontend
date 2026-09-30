@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import SiteHeader from "@/components/site-header";
 import { apiUnavailableMessage, isApiConfigured } from "@/lib/api/client";
+import { ogImage, siteDescription, siteName } from "@/lib/site";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -20,11 +21,24 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "医療施設マスタ検索",
-    template: "%s | 医療施設マスタ検索",
+    default: siteName,
+    template: `%s | ${siteName}`,
   },
-  description:
-    "全国8つの地方厚生局が公開する保険医療機関・保険薬局の指定一覧をもとに、全国約22万の病院・診療所・歯科診療所・薬局を検索できます。",
+  description: siteDescription,
+  // Shown when the URL is shared (Slack, X, LINE, ...).
+  openGraph: {
+    // No url: set here, every page would claim to be the top page when shared.
+    type: "website",
+    siteName,
+    title: siteName,
+    description: siteDescription,
+    locale: "ja_JP",
+    images: [ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [ogImage],
+  },
 };
 
 const hubUrl = "https://tomonoriyoshida.github.io/";

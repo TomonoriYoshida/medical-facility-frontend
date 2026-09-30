@@ -42,6 +42,8 @@ jobs:
         env:
           # Served under /medical-facility-frontend on the user's github.io domain.
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # The public URL, for the absolute URLs in link previews.
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
           # Set as a repository variable once the API has a public URL.
           NEXT_PUBLIC_API_ORIGIN: ${{ vars.API_ORIGIN }}
 
