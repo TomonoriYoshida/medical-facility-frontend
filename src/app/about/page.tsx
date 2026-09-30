@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PageTitle, SectionHeading } from "@/components/headings";
-import { apiDocsUrl, apiOrigin, openApiSpecUrl } from "@/lib/api/client";
+import { apiDocsUrl, apiOrigin, isApiConfigured, openApiSpecUrl } from "@/lib/api/client";
 import ExportList from "./export-list";
 
 export const metadata: Metadata = {
@@ -44,8 +44,13 @@ const endpoints = [
 ];
 
 const resources = [
-  { label: "APIドキュメント", href: apiDocsUrl },
-  { label: "OpenAPI仕様（JSON）", href: openApiSpecUrl },
+  // Until the API is public, its documentation has no URL to link to.
+  ...(isApiConfigured
+    ? [
+        { label: "APIドキュメント", href: apiDocsUrl },
+        { label: "OpenAPI仕様（JSON）", href: openApiSpecUrl },
+      ]
+    : []),
   { label: "API のソースコード（GitHub）", href: apiRepositoryUrl },
   { label: "このサイトのソースコード（GitHub）", href: frontendRepositoryUrl },
 ];
@@ -100,7 +105,9 @@ export default function AboutPage() {
       <section className="mt-10">
         <SectionHeading>エンドポイント</SectionHeading>
         <p className="mt-2 text-sm">
-          ベースURL：<code className="font-mono">{apiOrigin}/api</code>（すべて GET）
+          ベースURL：
+          {isApiConfigured ? <code className="font-mono">{apiOrigin}/api</code> : "公開準備中"}
+          （すべて GET）
         </p>
         <div className="mt-2 overflow-x-auto">
           <table className="data-table">
@@ -119,14 +126,18 @@ export default function AboutPage() {
                   <td>
                     {endpoint.description}
                     <br />
-                    <a
-                      href={`${apiOrigin}/api${endpoint.example}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`font-mono text-xs break-all ${linkClass}`}
-                    >
-                      例：{endpoint.example} ↗
-                    </a>
+                    {isApiConfigured ? (
+                      <a
+                        href={`${apiOrigin}/api${endpoint.example}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`font-mono text-xs break-all ${linkClass}`}
+                      >
+                        例：{endpoint.example} ↗
+                      </a>
+                    ) : (
+                      <span className="font-mono text-xs break-all text-muted">例：{endpoint.example}</span>
+                    )}
                   </td>
                 </tr>
               ))}

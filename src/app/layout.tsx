@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import SiteHeader from "@/components/site-header";
+import { apiUnavailableMessage, isApiConfigured } from "@/lib/api/client";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -38,6 +39,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <Providers>
           <SiteHeader />
+          {!isApiConfigured && (
+            <p role="status" className="border-b border-border bg-band px-4 py-3 text-center text-sm">
+              {apiUnavailableMessage}
+            </p>
+          )}
           <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
             {children}
           </main>

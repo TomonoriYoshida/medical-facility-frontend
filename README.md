@@ -32,3 +32,6 @@ docker compose exec app npm run generate:api
 ## デプロイ
 
 `main` へのpushでGitHub Pagesにデプロイされます。リポジトリ変数 `API_ORIGIN`（例: `https://api.example.com`）に公開APIのオリジンを設定してください。
+
+- APIのオリジンはビルド時に埋め込まれます。変数を変えたあとは、Actionsの「Deploy to GitHub Pages」を「Run workflow」で実行し直してください。
+- 未設定のままビルドすると、APIは公開準備中である旨を表示し、APIを呼び出しません。

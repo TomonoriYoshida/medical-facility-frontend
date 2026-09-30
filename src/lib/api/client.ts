@@ -1,14 +1,27 @@
 import createClient from "openapi-fetch";
 import type { paths } from "./schema";
 
+// The localhost fallback is for `next dev` only. A production build without an
+// origin must not send visitors' browsers to their own localhost.
 export const apiOrigin = (
-  process.env.NEXT_PUBLIC_API_ORIGIN || "http://localhost:8000"
+  process.env.NEXT_PUBLIC_API_ORIGIN ||
+  (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "")
 ).replace(/\/+$/, "");
+
+/** False until the deploy sets API_ORIGIN; the site then explains the API isn't public yet. */
+export const isApiConfigured = apiOrigin !== "";
+
+export const apiUnavailableMessage =
+  "デモ用のAPIは現在公開の準備中のため、検索などの機能はまだご利用いただけません。";
 
 export const apiDocsUrl = `${apiOrigin}/docs/api`;
 export const openApiSpecUrl = `${apiOrigin}/docs/api.json`;
 
-export const apiClient = createClient<paths>({ baseUrl: `${apiOrigin}/api` });
+export const apiClient = createClient<paths>({
+  baseUrl: `${apiOrigin}/api`,
+  // Without an origin the base URL would be this site's own /api, so fail without a request.
+  fetch: isApiConfigured ? undefined : () => Promise.reject(new Error("API origin is not configured")),
+});
 
 export class ApiError extends Error {
   constructor(
@@ -30,7 +43,10 @@ export async function unwrap<T>(
   try {
     result = await request;
   } catch {
-    throw new ApiError("APIに接続できませんでした。時間をおいて再度お試しください。", 0);
+    throw new ApiError(
+      isApiConfigured ? "APIに接続できませんでした。時間をおいて再度お試しください。" : apiUnavailableMessage,
+      0,
+    );
   }
 
   if (result.response.status === 429) {
