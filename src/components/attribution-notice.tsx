@@ -1,4 +1,6 @@
+import type { ReactNode } from "react";
 import type { Attribution } from "@/lib/api/types";
+import { safeExternalUrl } from "@/lib/url";
 
 /**
  * The data license (公共データ利用規約 1.0) requires crediting the source
@@ -13,14 +15,7 @@ export default function AttributionNotice({ attribution }: { attribution: Attrib
         <li>{attribution.notice}</li>
         <li>
           ライセンス：
-          <a
-            href={attribution.license.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent underline underline-offset-2"
-          >
-            {attribution.license.name}
-          </a>
+          <ExternalLink url={attribution.license.url}>{attribution.license.name}</ExternalLink>
         </li>
         <li>{attribution.disclaimer}</li>
       </ul>
@@ -29,18 +24,24 @@ export default function AttributionNotice({ attribution }: { attribution: Attrib
         <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1 pl-5">
           {attribution.sources.map((source) => (
             <li key={source.url}>
-              <a
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent underline underline-offset-2"
-              >
-                {source.bureau}
-              </a>
+              <ExternalLink url={source.url}>{source.bureau}</ExternalLink>
             </li>
           ))}
         </ul>
       </details>
     </aside>
+  );
+}
+
+/** The URLs come from the API, so anything but http(s) is shown as plain text. */
+function ExternalLink({ url, children }: { url: string; children: ReactNode }) {
+  const href = safeExternalUrl(url);
+  if (!href) {
+    return <span>{children}</span>;
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-2">
+      {children}
+    </a>
   );
 }

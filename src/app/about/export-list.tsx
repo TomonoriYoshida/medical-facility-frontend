@@ -6,6 +6,7 @@ import { ApiError } from "@/lib/api/client";
 import { useExports } from "@/lib/api/queries";
 import type { ExportFile } from "@/lib/api/types";
 import { formatBytes, formatDate, numberFormatter } from "@/lib/format";
+import { safeApiUrl } from "@/lib/url";
 
 type PrefectureRow = {
   code: string;
@@ -34,11 +35,12 @@ function groupByPrefecture(files: ExportFile[]): PrefectureRow[] {
 }
 
 function FileLink({ file }: { file?: ExportFile }) {
-  if (!file) {
+  const href = file && safeApiUrl(file.url);
+  if (!file || !href) {
     return <span className="text-muted">—</span>;
   }
   return (
-    <a href={file.url} className="text-accent underline underline-offset-2 hover:opacity-80" download>
+    <a href={href} className="text-accent underline underline-offset-2 hover:opacity-80" download>
       {file.format.toUpperCase()}
       <span className="ml-1 text-xs text-muted">{formatBytes(file.size)}</span>
     </a>
