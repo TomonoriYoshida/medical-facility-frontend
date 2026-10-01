@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { apiClient, unwrap } from "./client";
 import type {
   EventListQuery,
+  EventStatsQuery,
   EventPage,
   ExportsResponse,
   FacilityListQuery,
@@ -56,6 +57,16 @@ export function useFacilityStats(query: StatsQuery, { enabled = true }: { enable
   });
 }
 
+export function useEventStats(query: EventStatsQuery, { enabled = true }: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: ["facility-event-stats", query],
+    enabled,
+    queryFn: () => unwrap(apiClient.GET("/v1/stats/facility-events", { params: { query } })),
+    staleTime: 60 * 60 * 1000,
+    placeholderData: keepPreviousData,
+  });
+}
+
 // The casts below only narrow a change's old/new values and the export file
 // list, which the spec can't describe precisely (see types.ts).
 
@@ -74,9 +85,13 @@ export function useFacilityEvents(id: number | null) {
   });
 }
 
-export function useEvents(query: EventListQuery & { page?: number }) {
+export function useEvents(
+  query: EventListQuery & { page?: number },
+  { enabled = true }: { enabled?: boolean } = {},
+) {
   return useQuery({
     queryKey: ["events", query],
+    enabled,
     queryFn: async () =>
       (await unwrap(
         apiClient.GET("/v1/medical-facility-events", {

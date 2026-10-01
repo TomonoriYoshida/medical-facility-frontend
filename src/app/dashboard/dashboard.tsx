@@ -5,7 +5,11 @@ import OpeningsTab from "./openings-tab";
 import { useDashboardParams } from "./use-dashboard-params";
 
 const tabs = [
-  { id: "openings", label: "新規開業の動向", description: "期間内の新規開業の数と推移、多い市区町村、一覧" },
+  {
+    id: "openings",
+    label: "開業・交代の動向",
+    description: "期間内の新規開業（または院長の交代・継承など）の数と推移、多い市区町村、一覧",
+  },
   { id: "areas", label: "地域の比較", description: "市区町村ごとの施設の数（同じ診療科の競合）と、地図" },
 ] as const;
 

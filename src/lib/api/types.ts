@@ -81,6 +81,8 @@ export type StatsResponse = JsonOf<"v1.stats.facilities">;
 
 export type StatsGroup = StatsResponse["data"][number];
 
+export type EventStatsQuery = operations["v1.stats.facility-events"]["parameters"]["query"];
+
 export type FacilityListQuery = NonNullable<
   operations["v1.medical-facilities.index"]["parameters"]["query"]
 >;

@@ -25,6 +25,8 @@ const linkClass = "text-accent underline underline-offset-2 hover:opacity-80";
 const townLevel = 5;
 /** GeocodeLevel::MedicalInfoNet: a source (MHLW 医療情報ネット's coordinates), not a precision. */
 const medicalInfoNetLevel = 6;
+/** InstitutionType::Hospital */
+const hospitalType = 1;
 
 export default function FacilityDetail() {
   const id = parseId(useSearchParams().get("id"));
@@ -140,13 +142,21 @@ export default function FacilityDetail() {
                 </>
               )}
             </p>
-            <p className="mt-2 text-sm">
+            <p className="mt-2 flex flex-col gap-1 text-sm sm:flex-row sm:gap-6">
               <Link
                 href={`/nearby?lat=${data.location.latitude}&lng=${data.location.longitude}`}
                 className={linkClass}
               >
                 この周辺の施設を地図で探す →
               </Link>
+              {data.institution_type.code !== hospitalType && (
+                <Link
+                  href={`/nearby?lat=${data.location.latitude}&lng=${data.location.longitude}&institution_type=${hospitalType}&radius=5000`}
+                  className={linkClass}
+                >
+                  近くの病院（連携先の候補）を探す →
+                </Link>
+              )}
             </p>
           </>
         ) : (

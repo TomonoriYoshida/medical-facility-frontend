@@ -1,3 +1,6 @@
+"use client";
+
+import { type RefObject, useEffect, useRef, useState } from "react";
 import type { StatsGroup } from "@/lib/api/types";
 import { numberFormatter } from "@/lib/format";
 
@@ -38,14 +41,48 @@ type Props = {
   measure: string;
   /** Faded while the next filters' data loads, so the frame stays put. */
   isUpdating?: boolean;
+  /** Charts shown side by side pass their common maximum, so their bars compare directly. */
+  scaleMax?: number;
 };
 
-export default function MonthColumns({ groups, measure, isUpdating = false }: Props) {
+/** Room a label needs: "2025年11月" at text-xs is about 60px, plus a gap. */
+const labelWidth = 66;
+
+/**
+ * The columns' width, measured: charts sit full-width or side by side, so the
+ * viewport alone can't tell how much room each label has.
+ */
+function useWidth<T extends HTMLElement>(): [RefObject<T | null>, number | null] {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState<number | null>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+    const observer = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return [ref, width];
+}
+
+export default function MonthColumns({ groups, measure, isUpdating = false, scaleMax = 0 }: Props) {
+  const [axisRef, axisWidth] = useWidth<HTMLOListElement>();
   const max = Math.max(0, ...groups.map((group) => group.count));
-  const axisMax = niceMax(max);
+  const axisMax = niceMax(Math.max(max, scaleMax));
   const ticks = [axisMax, axisMax / 2, 0];
-  // Label every month up to a year; beyond that, every few so labels never collide.
-  const labels = tickLabels(groups, Math.ceil(groups.length / 12));
+  // Label as often as the measured column width allows (at least every 12th of
+  // the range until measured), so labels never collide.
+  const columnWidth = axisWidth === null ? null : axisWidth / groups.length;
+  const every = Math.max(
+    Math.ceil(groups.length / 12),
+    columnWidth === null ? 1 : Math.ceil(labelWidth / columnWidth),
+  );
+  // A centered label too close to the right edge would stick out of the chart.
+  const fitsRight = (index: number) =>
+    columnWidth === null || (groups.length - index - 0.5) * columnWidth >= labelWidth / 2;
+  const labels = tickLabels(groups, every).map((label, index) => (fitsRight(index) ? label : ""));
   const peakIndex = groups.findIndex((group) => group.count === max && max > 0);
 
   return (
@@ -108,9 +145,9 @@ export default function MonthColumns({ groups, measure, isUpdating = false }: Pr
           </ol>
         </div>
       </div>
-      <ol className="ml-10 flex gap-[2px] text-xs text-muted" aria-hidden>
+      <ol ref={axisRef} className="ml-10 flex gap-[2px] text-xs text-muted" aria-hidden>
         {groups.map((group, index) => (
-          <li key={group.key ?? index} className="min-w-0 flex-1 overflow-visible text-center whitespace-nowrap">
+          <li key={group.key ?? index} className="flex min-w-0 flex-1 justify-center whitespace-nowrap">
             {labels[index]}
           </li>
         ))}
