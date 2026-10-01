@@ -8,6 +8,7 @@ import FacilityMap, { type MapMarker } from "@/components/map/facility-map";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import { useFacilities, useOptions } from "@/lib/api/queries";
 import type { FacilityListQuery } from "@/lib/api/types";
+import { hasDepartmentFilter } from "@/lib/departments";
 import { formatDistance, numberFormatter } from "@/lib/format";
 
 /** 東京駅, until the visitor picks a place. */
@@ -64,6 +65,8 @@ export default function NearbySearch() {
   const radiusParam = Number(searchParams.get("radius"));
   const radius = radiusOptions.includes(radiusParam) ? radiusParam : defaultRadius;
   const institutionType = searchParams.get("institution_type");
+  const showsDepartmentFilter = hasDepartmentFilter(institutionType);
+  const departmentCategory = showsDepartmentFilter ? searchParams.get("department_category") : null;
 
   const query: FacilityListQuery = {
     latitude: center.latitude,
@@ -72,6 +75,7 @@ export default function NearbySearch() {
     status: activeStatus,
     per_page: maxResults,
     ...(institutionType ? { institution_type: Number(institutionType) } : {}),
+    ...(departmentCategory ? { department_category: Number(departmentCategory) } : {}),
   } as FacilityListQuery;
   const facilities = useFacilities(query);
 
@@ -156,7 +160,7 @@ export default function NearbySearch() {
   return (
     <>
       <div className="border border-border bg-surface p-4 sm:p-5">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-2 md:grid-cols-4">
           <div>
             <label htmlFor="radius" className={labelClass}>
               半径
@@ -181,7 +185,13 @@ export default function NearbySearch() {
             <select
               id="institution_type"
               value={institutionType ?? ""}
-              onChange={(event) => update({ institution_type: event.currentTarget.value })}
+              onChange={(event) => {
+                const value = event.currentTarget.value;
+                update({
+                  institution_type: value,
+                  ...(hasDepartmentFilter(value) ? {} : { department_category: null }),
+                });
+              }}
               className={selectClass}
             >
               <option value="">すべて</option>
@@ -194,6 +204,28 @@ export default function NearbySearch() {
                 : institutionType && <option value={institutionType}>…</option>}
             </select>
           </div>
+          {showsDepartmentFilter && (
+            <div>
+              <label htmlFor="department_category" className={labelClass}>
+                診療科
+              </label>
+              <select
+                id="department_category"
+                value={departmentCategory ?? ""}
+                onChange={(event) => update({ department_category: event.currentTarget.value })}
+                className={selectClass}
+              >
+                <option value="">すべて</option>
+                {options.data
+                  ? options.data.department_categories.map((department) => (
+                      <option key={department.code} value={department.code}>
+                        {department.label}
+                      </option>
+                    ))
+                  : departmentCategory && <option value={departmentCategory}>…</option>}
+              </select>
+            </div>
+          )}
           <div className="col-span-2 flex items-end md:col-span-1">
             <button
               type="button"

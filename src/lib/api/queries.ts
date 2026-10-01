@@ -6,6 +6,7 @@ import type {
   ExportsResponse,
   FacilityListQuery,
   MedicalFacilityEvent,
+  StatsQuery,
 } from "./types";
 
 export function useOptions() {
@@ -41,6 +42,17 @@ export function useFacility(id: number | null) {
           params: { path: { medicalFacility: id! } },
         }),
       ),
+  });
+}
+
+export function useFacilityStats(query: StatsQuery, { enabled = true }: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: ["facility-stats", query],
+    enabled,
+    queryFn: () => unwrap(apiClient.GET("/v1/stats/facilities", { params: { query } })),
+    // The API caches these for an hour; keep the frame while filters change.
+    staleTime: 60 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 }
 
