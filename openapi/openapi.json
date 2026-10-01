@@ -1023,7 +1023,7 @@
         "/v1/medical-facility-events": {
             "get": {
                 "operationId": "v1.medical-facility-events.index",
-                "description": "\u6bce\u6708\u306e\u516c\u958b\u30c7\u30fc\u30bf\u3092\u6bd4\u8f03\u3057\u3066\u898b\u3064\u304b\u3063\u305f\u3001\u65bd\u8a2d\u306e\u65b0\u898f\u30fb\u5ec3\u6b62\u30fb\u5909\u66f4\u3092\u65b0\u3057\u3044\u9806\u306b\u8fd4\u3057\u307e\u3059\u3002\n`occurred_on` \u306f\u5909\u5316\u304c\u8f09\u3063\u305f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u65e5\u4ed8\u3067\u3001\u5b9f\u969b\u306e\u958b\u696d\u65e5\u30fb\u5ec3\u6b62\u65e5\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\n\u53d6\u8fbc\u3092\u59cb\u3081\u305f\u6642\u70b9\u306e\u30c7\u30fc\u30bf\uff08\u521d\u56de\u53d6\u8fbc\uff09\u3068\u3001\u53d6\u308a\u8fbc\u307f\u76f4\u3057\u306b\u3088\u308b\u5dee\u5206\uff08\u518d\u51e6\u7406\uff09\u306f\u542b\u307f\u307e\u305b\u3093\u3002",
+                "description": "\u6bce\u6708\u306e\u516c\u958b\u30c7\u30fc\u30bf\u3092\u6bd4\u8f03\u3057\u3066\u898b\u3064\u304b\u3063\u305f\u3001\u65bd\u8a2d\u306e\u65b0\u898f\u30fb\u5ec3\u6b62\u30fb\u5909\u66f4\u3092\u65b0\u3057\u3044\u9806\u306b\u8fd4\u3057\u307e\u3059\u3002\n`occurred_on` \u306f\u5909\u5316\u304c\u8f09\u3063\u305f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u65e5\u4ed8\u3067\u3001\u5b9f\u969b\u306e\u958b\u696d\u65e5\u30fb\u5ec3\u6b62\u65e5\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002\n\u53d6\u8fbc\u3092\u59cb\u3081\u305f\u6642\u70b9\u306e\u30c7\u30fc\u30bf\uff08\u521d\u56de\u53d6\u8fbc\uff09\u3068\u3001\u53d6\u308a\u8fbc\u307f\u76f4\u3057\u306b\u3088\u308b\u5dee\u5206\uff08\u518d\u51e6\u7406\uff09\u306f\u542b\u307f\u307e\u305b\u3093\u3002\n\u524d\u56de\u306e\u78ba\u8a8d\u4ee5\u964d\u306b\u898b\u3064\u304b\u3063\u305f\u5909\u5316\u306f\u3001`detected_since` \u3067\u53d6\u5f97\u3057\u3066\u304f\u3060\u3055\u3044\u3002",
                 "summary": "\u5909\u5316\u306e\u4e00\u89a7",
                 "tags": [
                     "MedicalFacilityEvent"
@@ -1053,6 +1053,15 @@
                         "schema": {
                             "type": "string",
                             "format": "date"
+                        }
+                    },
+                    {
+                        "name": "detected_since",
+                        "in": "query",
+                        "description": "\u3053\u306e\u65e5\u6642\u4ee5\u964d\u306b\u691c\u77e5\u3055\u308c\u305f\u5909\u5316\u3060\u3051\u3092\u8fd4\u3059\uff08ISO 8601\u3001\u4f8b: 2026-10-01T05:00:00+09:00\uff09\u3002\n`occurred_on` \u306f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u65e5\u4ed8\u3067\u3001\u53d6\u308a\u8fbc\u3093\u3067\u691c\u77e5\u3059\u308b\u306e\u306f\u305d\u306e\u6570\u65e5\u301c\u6570\u9031\u9593\u5f8c\u306e\u305f\u3081\u3001\n\u300c\u524d\u56de\u78ba\u8a8d\u3057\u3066\u304b\u3089\u5897\u3048\u305f\u5909\u5316\u300d\u306f\u3053\u3061\u3089\u3067\u7d5e\u308a\u8fbc\u3080",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
                         }
                     },
                     {
@@ -2187,6 +2196,13 @@
                         "type": "string",
                         "description": "\u5909\u5316\u304c\u8f09\u3063\u305f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u65e5\u4ed8\uff08\u5b9f\u969b\u306e\u958b\u696d\u30fb\u5ec3\u6b62\u30fb\u5909\u66f4\u306e\u65e5\u3067\u306f\u306a\u3044\uff09"
                     },
+                    "detected_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "\u3053\u306e\u5909\u5316\u3092\u691c\u77e5\u3057\u305f\uff08\u516c\u958b\u30c7\u30fc\u30bf\u3092\u53d6\u308a\u8fbc\u3093\u3060\uff09\u65e5\u6642"
+                    },
                     "is_reopening": {
                         "type": "boolean",
                         "description": "\u904e\u53bb\u306b\u5ec3\u6b62\u3055\u308c\u305f\u65bd\u8a2d\u304c\u518d\u3073\u63b2\u8f09\u3055\u308c\u305f\u304b\uff08\u65b0\u898f\u306e\u3068\u304d\u306e\u307f\uff09"
@@ -2279,7 +2295,8 @@
                     "id",
                     "event_type",
                     "origin",
-                    "occurred_on"
+                    "occurred_on",
+                    "detected_at"
                 ],
                 "title": "MedicalFacilityEventResource"
             },
@@ -2331,6 +2348,13 @@
                     "occurred_on": {
                         "type": "string",
                         "description": "\u5909\u5316\u304c\u8f09\u3063\u305f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u65e5\u4ed8\uff08\u5b9f\u969b\u306e\u958b\u696d\u30fb\u5ec3\u6b62\u30fb\u5909\u66f4\u306e\u65e5\u3067\u306f\u306a\u3044\uff09"
+                    },
+                    "detected_at": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "\u3053\u306e\u5909\u5316\u3092\u691c\u77e5\u3057\u305f\uff08\u516c\u958b\u30c7\u30fc\u30bf\u3092\u53d6\u308a\u8fbc\u3093\u3060\uff09\u65e5\u6642"
                     },
                     "is_reopening": {
                         "type": "boolean",
@@ -2428,6 +2452,7 @@
                     "event_type",
                     "origin",
                     "occurred_on",
+                    "detected_at",
                     "facility"
                 ],
                 "title": "MedicalFacilityEventWithFacilityResource"

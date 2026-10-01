@@ -121,6 +121,7 @@ export interface paths {
          * @description 毎月の公開データを比較して見つかった、施設の新規・廃止・変更を新しい順に返します。
          *     `occurred_on` は変化が載った公開データの日付で、実際の開業日・廃止日ではありません。
          *     取込を始めた時点のデータ（初回取込）と、取り込み直しによる差分（再処理）は含みません。
+         *     前回の確認以降に見つかった変化は、`detected_since` で取得してください。
          */
         get: operations["v1.medical-facility-events.index"];
         put?: never;
@@ -244,6 +245,8 @@ export interface components {
             };
             /** @description 変化が載った公開データの日付（実際の開業・廃止・変更の日ではない） */
             occurred_on: string;
+            /** @description この変化を検知した（公開データを取り込んだ）日時 */
+            detected_at: string | null;
             /** @description 過去に廃止された施設が再び掲載されたか（新規のときのみ） */
             is_reopening?: boolean;
             /** @description 変更された項目と変更前後の値（変更のときのみ） */
@@ -277,6 +280,8 @@ export interface components {
             };
             /** @description 変化が載った公開データの日付（実際の開業・廃止・変更の日ではない） */
             occurred_on: string;
+            /** @description この変化を検知した（公開データを取り込んだ）日時 */
+            detected_at: string | null;
             /** @description 過去に廃止された施設が再び掲載されたか（新規のときのみ） */
             is_reopening?: boolean;
             /** @description 変更された項目と変更前後の値（変更のときのみ） */
@@ -811,6 +816,12 @@ export interface operations {
                 occurred_from?: string;
                 /** @description 変化が載った公開データの日付がこの日以前（YYYY-MM-DD） */
                 occurred_to?: string;
+                /**
+                 * @description この日時以降に検知された変化だけを返す（ISO 8601、例: 2026-10-01T05:00:00+09:00）。
+                 *     `occurred_on` は公開データの日付で、取り込んで検知するのはその数日〜数週間後のため、
+                 *     「前回確認してから増えた変化」はこちらで絞り込む
+                 */
+                detected_since?: string;
                 /** @description 施設の都道府県コード（JIS X 0401の2桁、01〜47） */
                 prefecture_code?: components["schemas"]["Prefecture"];
                 /** @description 施設の種別 */
