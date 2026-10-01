@@ -23,6 +23,13 @@ export default function AttributionNotice({ attribution }: { attribution: Attrib
           <ExternalLink url={attribution.address_source.url}>{attribution.address_source.name}</ExternalLink>
           （CC BY 4.0）
         </li>
+        <li>
+          位置（住所から町丁目までしか求められない施設）：
+          <ExternalLink url={attribution.medical_info_net_source.url}>
+            {attribution.medical_info_net_source.name}
+          </ExternalLink>
+          （{attribution.license.name}）
+        </li>
       </ul>
       <details className="mt-1">
         <summary className="cursor-pointer text-accent">出典元（各地方厚生局）</summary>

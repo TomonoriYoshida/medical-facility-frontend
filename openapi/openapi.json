@@ -97,6 +97,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "medical_info_net_source": {
+                                                            "type": "object",
+                                                            "description": "\u753a\u4e01\u76ee\u307e\u3067\u3057\u304b\u6c42\u3081\u3089\u308c\u306a\u3044\u65bd\u8a2d\u306e\u5ea7\u6a19\u306e\u51fa\u5178\uff08\u539a\u751f\u52b4\u50cd\u7701\u3001PDL1.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u6240\u5728\u5730\u5ea7\u6a19\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -122,6 +140,7 @@
                                                         "license",
                                                         "disclaimer",
                                                         "address_source",
+                                                        "medical_info_net_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -554,6 +573,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "medical_info_net_source": {
+                                                            "type": "object",
+                                                            "description": "\u753a\u4e01\u76ee\u307e\u3067\u3057\u304b\u6c42\u3081\u3089\u308c\u306a\u3044\u65bd\u8a2d\u306e\u5ea7\u6a19\u306e\u51fa\u5178\uff08\u539a\u751f\u52b4\u50cd\u7701\u3001PDL1.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u6240\u5728\u5730\u5ea7\u6a19\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -579,6 +616,7 @@
                                                         "license",
                                                         "disclaimer",
                                                         "address_source",
+                                                        "medical_info_net_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -690,6 +728,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "medical_info_net_source": {
+                                                            "type": "object",
+                                                            "description": "\u753a\u4e01\u76ee\u307e\u3067\u3057\u304b\u6c42\u3081\u3089\u308c\u306a\u3044\u65bd\u8a2d\u306e\u5ea7\u6a19\u306e\u51fa\u5178\uff08\u539a\u751f\u52b4\u50cd\u7701\u3001PDL1.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u6240\u5728\u5730\u5ea7\u6a19\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -715,6 +771,7 @@
                                                         "license",
                                                         "disclaimer",
                                                         "address_source",
+                                                        "medical_info_net_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -820,6 +877,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "medical_info_net_source": {
+                                                            "type": "object",
+                                                            "description": "\u753a\u4e01\u76ee\u307e\u3067\u3057\u304b\u6c42\u3081\u3089\u308c\u306a\u3044\u65bd\u8a2d\u306e\u5ea7\u6a19\u306e\u51fa\u5178\uff08\u539a\u751f\u52b4\u50cd\u7701\u3001PDL1.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u6240\u5728\u5730\u5ea7\u6a19\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -845,6 +920,7 @@
                                                         "license",
                                                         "disclaimer",
                                                         "address_source",
+                                                        "medical_info_net_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1104,6 +1180,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "medical_info_net_source": {
+                                                            "type": "object",
+                                                            "description": "\u753a\u4e01\u76ee\u307e\u3067\u3057\u304b\u6c42\u3081\u3089\u308c\u306a\u3044\u65bd\u8a2d\u306e\u5ea7\u6a19\u306e\u51fa\u5178\uff08\u539a\u751f\u52b4\u50cd\u7701\u3001PDL1.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u6240\u5728\u5730\u5ea7\u6a19\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1129,6 +1223,7 @@
                                                         "license",
                                                         "disclaimer",
                                                         "address_source",
+                                                        "medical_info_net_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1590,7 +1685,7 @@
                             "object",
                             "null"
                         ],
-                        "description": "\u4f4f\u6240\u304b\u3089\u6c42\u3081\u305f\u5ea7\u6a19\uff08\u4e16\u754c\u6e2c\u5730\u7cfb\uff09\u3002`level` \u306f\u305d\u306e\u7cbe\u5ea6\uff08\u4f4f\u5c45\u30fb\u8857\u533a\u30fb\u5730\u756a\u30fb\u753a\u4e01\u76ee\u306a\u3069\uff09\u3002\n\u6c42\u3081\u3089\u308c\u306a\u304b\u3063\u305f\u65bd\u8a2d\u306fnull",
+                        "description": "\u4f4f\u6240\u304b\u3089\u6c42\u3081\u305f\u5ea7\u6a19\uff08\u4e16\u754c\u6e2c\u5730\u7cfb\uff09\u3002`level` \u306f\u305d\u306e\u7cbe\u5ea6\uff08\u4f4f\u5c45\u30fb\u8857\u533a\u30fb\u5730\u756a\u30fb\u753a\u4e01\u76ee\u306a\u3069\uff09\u304b\u3001\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u5ea7\u6a19\u3092\u4f7f\u3063\u305f\u3053\u3068\u3002\n\u6c42\u3081\u3089\u308c\u306a\u304b\u3063\u305f\u65bd\u8a2d\u306fnull",
                         "properties": {
                             "latitude": {
                                 "type": "number"
