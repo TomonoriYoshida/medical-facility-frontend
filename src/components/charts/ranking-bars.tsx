@@ -1,12 +1,12 @@
-import type { StatsGroup } from "@/lib/api/types";
+import type { ChartGroup } from "@/lib/api/types";
 import { numberFormatter } from "@/lib/format";
 
 type Props = {
-  groups: StatsGroup[];
+  groups: ChartGroup[];
   /** Shown for a group whose label is null (e.g. an unresolved municipality). */
   unknownLabel: string;
   /** Makes each named row a button, e.g. to narrow the dashboard to it. */
-  onSelect?: (group: StatsGroup) => void;
+  onSelect?: (group: ChartGroup) => void;
   isUpdating?: boolean;
 };
 

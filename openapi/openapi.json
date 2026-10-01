@@ -115,6 +115,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -141,6 +159,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -591,6 +610,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -617,6 +654,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -746,6 +784,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -772,6 +828,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -895,6 +952,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -921,6 +996,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1188,6 +1264,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1214,6 +1308,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1444,6 +1539,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1470,6 +1583,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1498,7 +1612,7 @@
         "/v1/stats/facilities": {
             "get": {
                 "operationId": "v1.stats.facilities",
-                "description": "\u7d5e\u308a\u8fbc\u3093\u3060\u65bd\u8a2d\u3092 `group_by` \u3054\u3068\u306b\u6570\u3048\u307e\u3059\u3002\u7d5e\u308a\u8fbc\u307f\u306e\u6761\u4ef6\u306f\u4e00\u89a7API\u3068\u540c\u3058\u3067\u3059\u3002\n\u300c\u671f\u9593\u5185\u306b\u65b0\u898f\u958b\u696d\u3057\u305f\u65bd\u8a2d\u300d\u306f\u3001`designation_reason=\u65b0\u898f` \u3068 `designated_from`\u30fb`designated_to` \u3067\u6570\u3048\u307e\u3059\n\uff08\u4fdd\u967a\u533b\u7642\u6a5f\u95a2\u306e\u6307\u5b9a\u306f6\u5e74\u3054\u3068\u306b\u66f4\u65b0\u3055\u308c\u307e\u3059\u304c\u3001\u6307\u5b9a\u5e74\u6708\u65e5\u306f\u6700\u521d\u306e\u6307\u5b9a\u65e5\u306e\u307e\u307e\u3067\u3059\uff09\u3002\n\n- `month`: \u671f\u9593\u5185\u306e\u3059\u3079\u3066\u306e\u6708\u3092\u53e4\u3044\u9806\u306b\u8fd4\u3057\u307e\u3059\uff08\u65bd\u8a2d\u304c\u306a\u3044\u6708\u306f0\uff09\u3002\n- `municipality`: \u65bd\u8a2d\u6570\u306e\u591a\u3044\u9806\u3067\u3059\u3002\u4f4f\u6240\u304b\u3089\u5e02\u533a\u753a\u6751\u3092\u5224\u5b9a\u3067\u304d\u306a\u3044\u65bd\u8a2d\u306f `key`\u30fb`label` \u304c null \u306e1\u4ef6\u306b\u307e\u3068\u3081\u307e\u3059\u3002\n- `department_category`: \u65bd\u8a2d\u6570\u306e\u591a\u3044\u9806\u3067\u3059\u30021\u3064\u306e\u65bd\u8a2d\u304c\u8907\u6570\u306e\u8a3a\u7642\u79d1\u76ee\u306b\u6570\u3048\u3089\u308c\u308b\u305f\u3081\u3001`count` \u306e\u5408\u8a08\u306f `meta.total` \u3068\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002",
+                "description": "\u7d5e\u308a\u8fbc\u3093\u3060\u65bd\u8a2d\u3092 `group_by` \u3054\u3068\u306b\u6570\u3048\u307e\u3059\u3002\u7d5e\u308a\u8fbc\u307f\u306e\u6761\u4ef6\u306f\u4e00\u89a7API\u3068\u540c\u3058\u3067\u3059\u3002\n\u300c\u671f\u9593\u5185\u306b\u65b0\u898f\u958b\u696d\u3057\u305f\u65bd\u8a2d\u300d\u306f\u3001`designation_reason=\u65b0\u898f` \u3068 `designated_from`\u30fb`designated_to` \u3067\u6570\u3048\u307e\u3059\n\uff08\u4fdd\u967a\u533b\u7642\u6a5f\u95a2\u306e\u6307\u5b9a\u306f6\u5e74\u3054\u3068\u306b\u66f4\u65b0\u3055\u308c\u307e\u3059\u304c\u3001\u6307\u5b9a\u5e74\u6708\u65e5\u306f\u6700\u521d\u306e\u6307\u5b9a\u65e5\u306e\u307e\u307e\u3067\u3059\uff09\u3002\n\n- `month`: \u671f\u9593\u5185\u306e\u3059\u3079\u3066\u306e\u6708\u3092\u53e4\u3044\u9806\u306b\u8fd4\u3057\u307e\u3059\uff08\u65bd\u8a2d\u304c\u306a\u3044\u6708\u306f0\uff09\u3002\n- `municipality`: \u65bd\u8a2d\u6570\u306e\u591a\u3044\u9806\u3067\u3059\u3002\u4f4f\u6240\u304b\u3089\u5e02\u533a\u753a\u6751\u3092\u5224\u5b9a\u3067\u304d\u306a\u3044\u65bd\u8a2d\u306f `key`\u30fb`label` \u304c null \u306e1\u4ef6\u306b\u307e\u3068\u3081\u307e\u3059\u3002\n- `department_category`: \u65bd\u8a2d\u6570\u306e\u591a\u3044\u9806\u3067\u3059\u30021\u3064\u306e\u65bd\u8a2d\u304c\u8907\u6570\u306e\u8a3a\u7642\u79d1\u76ee\u306b\u6570\u3048\u3089\u308c\u308b\u305f\u3081\u3001`count` \u306e\u5408\u8a08\u306f `meta.total` \u3068\u4e00\u81f4\u3057\u307e\u305b\u3093\u3002\n\n`municipality` \u306e\u3068\u304d\u306f\u3001\u5404\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\uff08\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u300d\u3001`meta.population_as_of` \u6642\u70b9\uff09\u3068\n\u4eba\u53e31\u4e07\u4eba\u3042\u305f\u308a\u306e\u4ef6\u6570\uff08`count_per_10k`\uff09\u3082\u8fd4\u3057\u307e\u3059\u3002\u4f4f\u6c11\u767b\u9332\u4e0a\u306e\u4eba\u53e3\u306e\u305f\u3081\u3001\u663c\u9593\u4eba\u53e3\u306e\u591a\u3044\u90fd\u5fc3\u90e8\u3067\u306f\u9ad8\u304f\u51fa\u307e\u3059\u3002\n\u307b\u304b\u306e `group_by` \u3068\u3001\u4eba\u53e3\u304c\u308f\u304b\u3089\u306a\u3044\u5e02\u533a\u753a\u6751\u3067\u306f null \u3067\u3059\u3002",
                 "summary": "\u65bd\u8a2d\u6570\u306e\u96c6\u8a08",
                 "tags": [
                     "MedicalFacilityStats"
@@ -1611,12 +1725,26 @@
                                                     },
                                                     "count": {
                                                         "type": "integer"
+                                                    },
+                                                    "population": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "count_per_10k": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
                                                     }
                                                 },
                                                 "required": [
                                                     "key",
                                                     "label",
-                                                    "count"
+                                                    "count",
+                                                    "population",
+                                                    "count_per_10k"
                                                 ]
                                             }
                                         },
@@ -1629,6 +1757,13 @@
                                                 },
                                                 "group_by": {
                                                     "type": "string"
+                                                },
+                                                "population_as_of": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ],
+                                                    "description": "`population` \u306e\u57fa\u6e96\u65e5\uff08YYYY-MM-DD\uff09\u3002`municipality` \u4ee5\u5916\u3001\u307e\u305f\u306f\u4eba\u53e3\u304c\u672a\u53d6\u8fbc\u306a\u3089 null"
                                                 },
                                                 "attribution": {
                                                     "type": "object",
@@ -1694,6 +1829,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1720,6 +1873,7 @@
                                                         "disclaimer",
                                                         "address_source",
                                                         "medical_info_net_source",
+                                                        "population_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1727,6 +1881,7 @@
                                             "required": [
                                                 "total",
                                                 "group_by",
+                                                "population_as_of",
                                                 "attribution"
                                             ]
                                         }

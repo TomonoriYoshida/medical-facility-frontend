@@ -81,6 +81,9 @@ export type StatsResponse = JsonOf<"v1.stats.facilities">;
 
 export type StatsGroup = StatsResponse["data"][number];
 
+/** What a chart needs from either stats endpoint's groups. */
+export type ChartGroup = Pick<StatsGroup, "label" | "count"> & { key: string | number | null };
+
 export type EventStatsQuery = operations["v1.stats.facility-events"]["parameters"]["query"];
 
 export type FacilityListQuery = NonNullable<

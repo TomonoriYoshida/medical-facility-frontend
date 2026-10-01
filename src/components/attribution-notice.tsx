@@ -30,6 +30,11 @@ export default function AttributionNotice({ attribution }: { attribution: Attrib
           </ExternalLink>
           （{attribution.license.name}）
         </li>
+        <li>
+          市区町村の人口（ダッシュボードの人口あたりの数）：
+          <ExternalLink url={attribution.population_source.url}>{attribution.population_source.name}</ExternalLink>
+          （政府標準利用規約、CC BY 4.0 互換）
+        </li>
       </ul>
       <details className="mt-1">
         <summary className="cursor-pointer text-accent">出典元（各地方厚生局）</summary>

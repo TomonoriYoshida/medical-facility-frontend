@@ -1,7 +1,7 @@
 "use client";
 
 import { type RefObject, useEffect, useRef, useState } from "react";
-import type { StatsGroup } from "@/lib/api/types";
+import type { ChartGroup } from "@/lib/api/types";
 import { numberFormatter } from "@/lib/format";
 
 /**
@@ -21,7 +21,7 @@ function niceMax(value: number): number {
  * X-axis labels for every `every`-th column: "2026年1月" on the first labeled
  * column of each year, "3月" otherwise, so long ranges keep their years.
  */
-function tickLabels(groups: StatsGroup[], every: number): string[] {
+function tickLabels(groups: ChartGroup[], every: number): string[] {
   let labeledYear: number | null = null;
   return groups.map((group, index) => {
     if (index % every !== 0 || typeof group.key !== "string") {
@@ -36,7 +36,7 @@ function tickLabels(groups: StatsGroup[], every: number): string[] {
 
 type Props = {
   /** Monthly groups from GET /v1/stats/facilities?group_by=month, oldest first. */
-  groups: StatsGroup[];
+  groups: ChartGroup[];
   /** What a count means, for the tooltip and the table ("新規開業"). */
   measure: string;
   /** Faded while the next filters' data loads, so the frame stays put. */

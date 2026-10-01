@@ -174,6 +174,10 @@ export interface paths {
          *     - `month`: 期間内のすべての月を古い順に返します（施設がない月は0）。
          *     - `municipality`: 施設数の多い順です。住所から市区町村を判定できない施設は `key`・`label` が null の1件にまとめます。
          *     - `department_category`: 施設数の多い順です。1つの施設が複数の診療科目に数えられるため、`count` の合計は `meta.total` と一致しません。
+         *
+         *     `municipality` のときは、各市区町村の人口（総務省「住民基本台帳に基づく人口」、`meta.population_as_of` 時点）と
+         *     人口1万人あたりの件数（`count_per_10k`）も返します。住民登録上の人口のため、昼間人口の多い都心部では高く出ます。
+         *     ほかの `group_by` と、人口がわからない市区町村では null です。
          */
         get: operations["v1.stats.facilities"];
         put?: never;
@@ -463,6 +467,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -639,6 +650,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -698,6 +716,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -756,6 +781,13 @@ export interface operations {
                                     name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
@@ -849,6 +881,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -932,6 +971,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -993,11 +1039,15 @@ export interface operations {
                             key: number | string | null;
                             label: string | null;
                             count: number;
+                            population: number | null;
+                            count_per_10k: number | null;
                         }[];
                         meta: {
                             /** @description 絞り込んだ施設の数 */
                             total: number;
                             group_by: string;
+                            /** @description `population` の基準日（YYYY-MM-DD）。`municipality` 以外、または人口が未取込なら null */
+                            population_as_of: string | null;
                             attribution: {
                                 /** @constant */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
@@ -1022,6 +1072,13 @@ export interface operations {
                                     name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {

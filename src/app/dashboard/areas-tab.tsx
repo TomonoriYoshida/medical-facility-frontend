@@ -9,9 +9,9 @@ import { SectionHeading } from "@/components/headings";
 import FacilityMap, { type MapMarker } from "@/components/map/facility-map";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import { useEventStats, useFacilities, useFacilityStats, useOptions } from "@/lib/api/queries";
-import type { EventStatsQuery, FacilityListQuery, StatsQuery } from "@/lib/api/types";
+import type { EventStatsQuery, FacilityListQuery, StatsGroup, StatsQuery } from "@/lib/api/types";
 import { hasDepartmentFilter } from "@/lib/departments";
-import { numberFormatter } from "@/lib/format";
+import { formatDate, numberFormatter } from "@/lib/format";
 import { recentMonths } from "@/lib/periods";
 import FilterSelect from "./filter-select";
 import { useDashboardParams } from "./use-dashboard-params";
@@ -26,6 +26,43 @@ const hospitalType = 1;
 const hospitalRadius = 5000;
 /** MedicalFacilityEventType::Removed */
 const closedEvent = 2;
+
+const orderOptions = [
+  { value: "per_capita_desc", label: "人口あたりの多い順" },
+  { value: "per_capita_asc", label: "人口あたりの少ない順" },
+];
+
+/** Below this, one facility more or less swings the per-capita figure a lot. */
+const smallPopulation = 10_000;
+
+const perCapitaFormatter = new Intl.NumberFormat("ja-JP", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function isSmallPopulation(population: number | null): boolean {
+  return population !== null && population < smallPopulation;
+}
+
+/** The API returns most facilities first; per capita is sorted here, unknown populations last. */
+function sortRows(rows: StatsGroup[], order: string): StatsGroup[] {
+  if (order === "") {
+    return rows;
+  }
+  const direction = order === "per_capita_asc" ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    if (a.count_per_10k === null || b.count_per_10k === null) {
+      return Number(a.count_per_10k === null) - Number(b.count_per_10k === null);
+    }
+    return (a.count_per_10k - b.count_per_10k) * direction || b.count - a.count;
+  });
+}
+
+function InlineBar({ value, max, text }: { value: number; max: number; text: string }) {
+  return (
+    <span className="flex items-center gap-2">
+      <span aria-hidden className="h-3 shrink-0 rounded-r-[4px] bg-accent" style={{ width: `${(value / max) * 75}%` }} />
+      <span className="tabular-nums">{text}</span>
+    </span>
+  );
+}
 
 export default function AreasTab() {
   const { get, update } = useDashboardParams();
@@ -103,8 +140,12 @@ export default function AreasTab() {
     ...(openingsTrend.data?.data ?? []).map((group) => group.count),
     ...(closuresTrend.data?.data ?? []).map((group) => group.count),
   );
-  const rows = facilities.data?.data ?? [];
+  const order = orderOptions.some((option) => option.value === get("order")) ? get("order") : "";
+  const byPerCapita = order !== "";
+  const rows = sortRows(facilities.data?.data ?? [], order);
   const maxCount = Math.max(1, ...rows.map((row) => row.count));
+  const maxPerCapita = Math.max(0.01, ...rows.map((row) => row.count_per_10k ?? 0));
+  const populationAsOf = facilities.data?.meta.population_as_of;
   const selected = rows.find((row) => row.key === area);
 
   function selectArea(code: string) {
@@ -164,9 +205,22 @@ export default function AreasTab() {
 
           <section className="mt-10">
             <SectionHeading>市区町村ごとの施設の数</SectionHeading>
-            <p className="mt-2 text-sm text-muted">
-              指定中の施設の多い順です。同じ種別・診療科の施設の数は、開業するときの競合の多さの目安になります（人口あたりではありません）。
-            </p>
+            <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+              <p className="max-w-2xl text-sm text-muted">
+                同じ種別・診療科の指定中の施設の数は、開業するときの競合の多さの目安になります。
+                人口1万人あたりで比べると、人口の多い地域ほど数が多く見える偏りを除けます。少ない順に並べると、施設が手薄な地域を探せます。
+              </p>
+              <div className="w-56">
+                <FilterSelect
+                  id="order"
+                  label="並び順"
+                  value={order}
+                  allLabel="施設の多い順"
+                  options={orderOptions}
+                  onChange={(value) => update({ order: value })}
+                />
+              </div>
+            </div>
             {rows.length === 0 ? (
               <div className="mt-3">
                 <EmptyState>条件に一致する施設はありません。</EmptyState>
@@ -178,6 +232,7 @@ export default function AreasTab() {
                     <tr>
                       <th>市区町村</th>
                       <th>指定中の施設</th>
+                      <th>人口1万人あたり</th>
                       <th>直近{openingMonths}か月の新規開業</th>
                       <th>直近{openingMonths}か月の廃止</th>
                     </tr>
@@ -199,15 +254,27 @@ export default function AreasTab() {
                             </button>
                           )}
                         </th>
-                        <td className="w-1/2">
-                          <span className="flex items-center gap-2">
-                            <span
-                              aria-hidden
-                              className="h-3 shrink-0 rounded-r-[4px] bg-accent"
-                              style={{ width: `${(row.count / maxCount) * 75}%` }}
-                            />
-                            <span className="tabular-nums">{numberFormatter.format(row.count)}</span>
-                          </span>
+                        {/* The bar follows the column the table is sorted by. */}
+                        <td className={byPerCapita ? "text-right tabular-nums" : "w-2/5"}>
+                          {byPerCapita ? (
+                            numberFormatter.format(row.count)
+                          ) : (
+                            <InlineBar value={row.count} max={maxCount} text={numberFormatter.format(row.count)} />
+                          )}
+                        </td>
+                        <td
+                          className={`${byPerCapita ? "w-2/5" : "text-right"} tabular-nums ${
+                            isSmallPopulation(row.population) ? "text-muted" : ""
+                          }`}
+                          title={row.population === null ? undefined : `人口 ${numberFormatter.format(row.population)}人`}
+                        >
+                          {row.count_per_10k === null ? (
+                            "—"
+                          ) : byPerCapita ? (
+                            <InlineBar value={row.count_per_10k} max={maxPerCapita} text={perCapitaFormatter.format(row.count_per_10k)} />
+                          ) : (
+                            perCapitaFormatter.format(row.count_per_10k)
+                          )}
                         </td>
                         <td className="text-right tabular-nums">
                           {/* Not the previous filters' counts while the new ones load. */}
@@ -228,9 +295,15 @@ export default function AreasTab() {
                 </table>
               </div>
             )}
-            <p className="mt-1 text-xs text-muted">
-              ※ 廃止は、毎月の公開データを前回分と比較して検知した件数です。記録は運用を始めてから蓄積されます。
-            </p>
+            <ul className="mt-1 space-y-0.5 text-xs text-muted">
+              <li>
+                ※ 人口は総務省の住民基本台帳人口
+                {populationAsOf ? `（${formatDate(populationAsOf)}時点）` : ""}
+                です。住民登録上の人口のため、昼間人口の多い都心部（千代田区など）では人口あたりの数が高く出ます。
+              </li>
+              <li>※ 灰色の値は人口1万人未満の市区町村で、施設が1〜2件増減するだけで大きく変わります。</li>
+              <li>※ 廃止は、毎月の公開データを前回分と比較して検知した件数です。記録は運用を始めてから蓄積されます。</li>
+            </ul>
             {closures.isError && (
               <p role="alert" className="mt-1 text-xs text-danger">
                 廃止の件数を取得できませんでした（「—」の列）。時間をおいて再度お試しください。
