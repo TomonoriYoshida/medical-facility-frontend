@@ -63,7 +63,7 @@ export function formatChangeValue(value: ChangeValue): string {
     return value
       .map((item) =>
         isHistoryEntry(item)
-          ? `${formatDate(item.date)} ${item.reason}`
+          ? `${formatDate(item.date)} ${item.reason ?? "—"}`
           : isCodeLabel(item)
             ? item.label
             : String(item),

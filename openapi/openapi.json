@@ -311,7 +311,7 @@
                     {
                         "name": "q",
                         "in": "query",
-                        "description": "\u65bd\u8a2d\u540d\u30fb\u4f4f\u6240\u306e\u3042\u3044\u307e\u3044\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\uff08\u5168\u89d2\u534a\u89d2\u30fb\u7570\u4f53\u5b57\u3086\u308c\u3092\u5438\u53ce\uff09",
+                        "description": "\u65bd\u8a2d\u540d\u30fb\u4f4f\u6240\u306e\u3042\u3044\u307e\u3044\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\uff08\u5168\u89d2\u534a\u89d2\u30fb\u7570\u4f53\u5b57\u3086\u308c\u3092\u5438\u53ce\uff09\u3002\n\u7a7a\u767d\uff08\u5168\u89d2\u30fb\u534a\u89d2\uff09\u3067\u533a\u5207\u308b\u3068\u3001\u3059\u3079\u3066\u306e\u8a9e\u3092\u542b\u3080\u65bd\u8a2d\u3092\u8fd4\u3059\uff08\u4f8b: `\u672d\u5e4c \u773c\u79d1`\u3001\u6700\u59275\u8a9e\uff09",
                         "schema": {
                             "type": "string",
                             "maxLength": 255
@@ -1008,7 +1008,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated set of `MedicalFacilityEventResource`",
+                        "description": "Paginated set of `MedicalFacilityEventWithFacilityResource`",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1017,17 +1017,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "allOf": [
-                                                    {
-                                                        "$ref": "#/components/schemas/MedicalFacilityEventResource"
-                                                    },
-                                                    {
-                                                        "type": "object",
-                                                        "required": [
-                                                            "facility"
-                                                        ]
-                                                    }
-                                                ]
+                                                "$ref": "#/components/schemas/MedicalFacilityEventWithFacilityResource"
                                             }
                                         },
                                         "links": {
@@ -1277,66 +1267,152 @@
                                             "properties": {
                                                 "prefectures": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "string"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            },
+                                                            "bureau": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "code": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "code",
+                                                                    "label"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label",
+                                                            "bureau"
+                                                        ]
+                                                    }
                                                 },
                                                 "institution_types": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "integer"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label"
+                                                        ]
+                                                    }
                                                 },
                                                 "statuses": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "integer"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label"
+                                                        ]
+                                                    }
                                                 },
                                                 "bureaus": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "integer"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label"
+                                                        ]
+                                                    }
                                                 },
                                                 "department_categories": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "integer"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label"
+                                                        ]
+                                                    }
                                                 },
                                                 "event_types": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "integer"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label"
+                                                        ]
+                                                    }
                                                 },
                                                 "geocode_levels": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "code": {
+                                                                "type": "integer"
+                                                            },
+                                                            "label": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "code",
+                                                            "label"
+                                                        ]
+                                                    }
                                                 },
                                                 "designation_reasons": {
                                                     "type": "array",
-                                                    "prefixItems": [
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u65b0\u898f"
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u7d44\u7e54\u5909\u66f4"
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u4ea4\u4ee3"
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u79fb\u52d5"
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u79fb\u8ee2"
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u305d\u306e\u4ed6"
-                                                        },
-                                                        {
-                                                            "type": "string",
-                                                            "const": "\u7d99\u627f"
-                                                        }
-                                                    ],
-                                                    "minItems": 7,
-                                                    "maxItems": 7
+                                                    "description": "\u4ee3\u8868\u7684\u306a\u767b\u9332\u7406\u7531\uff08\u5143\u30c7\u30fc\u30bf\u306f\u81ea\u7531\u8a18\u8ff0\uff09",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
                                                 }
                                             },
                                             "required": [
@@ -1533,9 +1609,6 @@
                                 "new"
                             ]
                         }
-                    },
-                    "facility": {
-                        "$ref": "#/components/schemas/MedicalFacilityResource"
                     }
                 },
                 "required": [
@@ -1555,6 +1628,146 @@
                 ],
                 "title": "MedicalFacilityEventType"
             },
+            "MedicalFacilityEventWithFacilityResource": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "event_type": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "integer"
+                            },
+                            "label": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "code",
+                            "label"
+                        ]
+                    },
+                    "origin": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "integer"
+                            },
+                            "label": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "code",
+                            "label"
+                        ]
+                    },
+                    "occurred_on": {
+                        "type": "string",
+                        "description": "\u5909\u5316\u304c\u8f09\u3063\u305f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u65e5\u4ed8\uff08\u5b9f\u969b\u306e\u958b\u696d\u30fb\u5ec3\u6b62\u30fb\u5909\u66f4\u306e\u65e5\u3067\u306f\u306a\u3044\uff09"
+                    },
+                    "is_reopening": {
+                        "type": "boolean",
+                        "description": "\u904e\u53bb\u306b\u5ec3\u6b62\u3055\u308c\u305f\u65bd\u8a2d\u304c\u518d\u3073\u63b2\u8f09\u3055\u308c\u305f\u304b\uff08\u65b0\u898f\u306e\u3068\u304d\u306e\u307f\uff09"
+                    },
+                    "changes": {
+                        "type": "array",
+                        "description": "\u5909\u66f4\u3055\u308c\u305f\u9805\u76ee\u3068\u5909\u66f4\u524d\u5f8c\u306e\u5024\uff08\u5909\u66f4\u306e\u3068\u304d\u306e\u307f\uff09",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "attribute": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "string",
+                                            "enum": [
+                                                "bureau"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "old": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer"
+                                                },
+                                                "label": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "code",
+                                                "label"
+                                            ]
+                                        },
+                                        {
+                                            "type": "array"
+                                        },
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                },
+                                "new": {
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "code": {
+                                                    "type": "integer"
+                                                },
+                                                "label": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "code",
+                                                "label"
+                                            ]
+                                        },
+                                        {
+                                            "type": "array"
+                                        },
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "attribute",
+                                "old",
+                                "new"
+                            ]
+                        }
+                    },
+                    "facility": {
+                        "$ref": "#/components/schemas/MedicalFacilityResource"
+                    }
+                },
+                "required": [
+                    "id",
+                    "event_type",
+                    "origin",
+                    "occurred_on",
+                    "facility"
+                ],
+                "title": "MedicalFacilityEventWithFacilityResource"
+            },
             "MedicalFacilityResource": {
                 "type": "object",
                 "properties": {
@@ -1573,12 +1786,10 @@
                     },
                     "institution_type": {
                         "type": "object",
+                        "description": "\u65bd\u8a2d\u7a2e\u5225",
                         "properties": {
                             "code": {
-                                "type": [
-                                    "integer",
-                                    "string"
-                                ]
+                                "type": "integer"
                             },
                             "label": {
                                 "type": "string"
@@ -1591,12 +1802,10 @@
                     },
                     "status": {
                         "type": "object",
+                        "description": "\u6307\u5b9a\u72b6\u614b",
                         "properties": {
                             "code": {
-                                "type": [
-                                    "integer",
-                                    "string"
-                                ]
+                                "type": "integer"
                             },
                             "label": {
                                 "type": "string"
@@ -1609,12 +1818,10 @@
                     },
                     "bureau": {
                         "type": "object",
+                        "description": "\u767a\u884c\u5143\u306e\u5730\u65b9\u539a\u751f\u5c40",
                         "properties": {
                             "code": {
-                                "type": [
-                                    "integer",
-                                    "string"
-                                ]
+                                "type": "integer"
                             },
                             "label": {
                                 "type": "string"
@@ -1635,10 +1842,7 @@
                         "type": "object",
                         "properties": {
                             "code": {
-                                "type": [
-                                    "integer",
-                                    "string"
-                                ]
+                                "type": "string"
                             },
                             "label": {
                                 "type": "string"
@@ -1657,13 +1861,13 @@
                         "description": "\u4f4f\u6240\u304b\u3089\u5224\u5b9a\u3057\u305f\u5e02\u533a\u753a\u6751\u3002\u5224\u5b9a\u3067\u304d\u306a\u3044\u5834\u5408\u306fnull",
                         "properties": {
                             "code": {
+                                "type": "string"
+                            },
+                            "label": {
                                 "type": [
                                     "string",
                                     "null"
                                 ]
-                            },
-                            "label": {
-                                "type": "string"
                             }
                         },
                         "required": [
@@ -1697,10 +1901,7 @@
                                 "type": "object",
                                 "properties": {
                                     "code": {
-                                        "type": [
-                                            "integer",
-                                            "string"
-                                        ]
+                                        "type": "integer"
                                     },
                                     "label": {
                                         "type": "string"
@@ -1739,47 +1940,57 @@
                             "array",
                             "null"
                         ],
-                        "items": {}
-                    },
-                    "bed_counts": {
-                        "type": [
-                            "array",
-                            "null"
-                        ],
-                        "items": {}
-                    },
-                    "department_categories": {
-                        "anyOf": [
-                            {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": [
-                                                "integer",
-                                                "string"
-                                            ]
-                                        },
-                                        "label": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "required": [
-                                        "code",
-                                        "label"
+                        "description": "\u6307\u5b9a\u5e74\u6708\u65e5\u6b04\u306e\u5c65\u6b74\uff08\u65b0\u3057\u3044\u9806\uff09\u3002`reason` \u306f\u767b\u9332\u7406\u7531\uff08\u65b0\u898f\u30fb\u4ea4\u4ee3\u30fb\u7d44\u7e54\u5909\u66f4\u306a\u3069\u3001\u8a18\u8f09\u304c\u306a\u3051\u308c\u3070null\uff09\u3001\n`date` \u306f\u73fe\u5728\u306e\u6307\u5b9a\u671f\u9593\u306e\u958b\u59cb\u65e5\u3068\u898b\u3089\u308c\u308b\u65e5\u4ed8\uff08\u8aad\u307f\u53d6\u308c\u306a\u3051\u308c\u3070null\uff09",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "reason": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ]
+                                },
+                                "date": {
+                                    "type": [
+                                        "string",
+                                        "null"
                                     ]
                                 }
                             },
-                            {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
+                            "required": [
+                                "reason",
+                                "date"
+                            ]
+                        }
+                    },
+                    "bed_counts": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "description": "\u75c5\u5e8a\u7a2e\u5225\uff08\u4e00\u822c\u30fb\u7642\u990a\u30fb\u7cbe\u795e\u306a\u3069\uff09\u3054\u3068\u306e\u75c5\u5e8a\u6570\u3002\u85ac\u5c40\u306f\u5e38\u306bnull",
+                        "additionalProperties": {
+                            "type": "integer"
+                        }
+                    },
+                    "department_categories": {
+                        "type": "array",
+                        "description": "\u8a3a\u7642\u79d1\u76ee\u306e\u5927\u5206\u985e",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer"
                                 },
-                                "minItems": 0,
-                                "maxItems": 0
-                            }
-                        ]
+                                "label": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "code",
+                                "label"
+                            ]
+                        }
                     },
                     "created_at": {
                         "type": [

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { MedicalFacilityEvent } from "@/lib/api/types";
+import type { MedicalFacility, MedicalFacilityEvent } from "@/lib/api/types";
 import { attributeLabel, formatChangeValue, formatDate } from "@/lib/format";
 
 // Codes follow App\Enums\MedicalFacilityEventType / MedicalFacilityEventOrigin.
@@ -31,7 +31,8 @@ export default function EventItem({
   event,
   showFacility = false,
 }: {
-  event: MedicalFacilityEvent;
+  // The nationwide feed attaches the facility; one facility's history doesn't.
+  event: MedicalFacilityEvent & { facility?: MedicalFacility };
   showFacility?: boolean;
 }) {
   return (

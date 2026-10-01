@@ -195,41 +195,72 @@ export interface components {
                     label: string;
                 } | unknown[] | string | null;
             }[];
-            facility?: components["schemas"]["MedicalFacilityResource"];
         };
         /**
          * MedicalFacilityEventType
          * @enum {integer}
          */
         MedicalFacilityEventType: 1 | 2 | 3;
+        /** MedicalFacilityEventWithFacilityResource */
+        MedicalFacilityEventWithFacilityResource: {
+            id: number;
+            event_type: {
+                code: number;
+                label: string;
+            };
+            origin: {
+                code: number;
+                label: string;
+            };
+            /** @description 変化が載った公開データの日付（実際の開業・廃止・変更の日ではない） */
+            occurred_on: string;
+            /** @description 過去に廃止された施設が再び掲載されたか（新規のときのみ） */
+            is_reopening?: boolean;
+            /** @description 変更された項目と変更前後の値（変更のときのみ） */
+            changes?: {
+                attribute: string | "bureau";
+                old: {
+                    code: number;
+                    label: string;
+                } | unknown[] | string | null;
+                new: {
+                    code: number;
+                    label: string;
+                } | unknown[] | string | null;
+            }[];
+            facility: components["schemas"]["MedicalFacilityResource"];
+        };
         /** MedicalFacilityResource */
         MedicalFacilityResource: {
             id: number;
             facility_code: string;
             /** @description 全国で一意な10桁の医療機関コード（都道府県番号＋点数表番号＋医療機関コード7桁） */
             medical_institution_code: string | null;
+            /** @description 施設種別 */
             institution_type: {
-                code: number | string;
+                code: number;
                 label: string;
             };
+            /** @description 指定状態 */
             status: {
-                code: number | string;
+                code: number;
                 label: string;
             };
+            /** @description 発行元の地方厚生局 */
             bureau: {
-                code: number | string;
+                code: number;
                 label: string;
             };
             name: string;
             prefecture_code: string;
             prefecture: {
-                code: number | string;
+                code: string;
                 label: string;
             };
             /** @description 住所から判定した市区町村。判定できない場合はnull */
             municipality: {
-                code: string | null;
-                label: string;
+                code: string;
+                label: string | null;
             } | null;
             postal_code: string | null;
             address: string;
@@ -241,7 +272,7 @@ export interface components {
                 latitude: number;
                 longitude: number;
                 level: {
-                    code: number | string;
+                    code: number;
                     label: string;
                 };
             } | null;
@@ -249,12 +280,23 @@ export interface components {
             distance?: number;
             phone_number: string | null;
             designated_on: string | null;
-            designation_history: unknown[] | null;
-            bed_counts: unknown[] | null;
+            /**
+             * @description 指定年月日欄の履歴（新しい順）。`reason` は登録理由（新規・交代・組織変更など、記載がなければnull）、
+             *     `date` は現在の指定期間の開始日と見られる日付（読み取れなければnull）
+             */
+            designation_history: {
+                reason: string | null;
+                date: string | null;
+            }[] | null;
+            /** @description 病床種別（一般・療養・精神など）ごとの病床数。薬局は常にnull */
+            bed_counts: {
+                [key: string]: number;
+            } | null;
+            /** @description 診療科目の大分類 */
             department_categories: {
-                code: number | string;
+                code: number;
                 label: string;
-            }[] | string[];
+            }[];
             /** Format: date-time */
             created_at: string | null;
             /** Format: date-time */
@@ -439,7 +481,10 @@ export interface operations {
                  *     カンマ区切りで最大100件まで指定できる
                  */
                 medical_institution_code?: string;
-                /** @description 施設名・住所のあいまい検索キーワード（全角半角・異体字ゆれを吸収） */
+                /**
+                 * @description 施設名・住所のあいまい検索キーワード（全角半角・異体字ゆれを吸収）。
+                 *     空白（全角・半角）で区切ると、すべての語を含む施設を返す（例: `札幌 眼科`、最大5語）
+                 */
                 q?: string;
                 /** @description 指定年月日がこの日以降（YYYY-MM-DD） */
                 designated_from?: string;
@@ -688,14 +733,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Paginated set of `MedicalFacilityEventResource` */
+            /** @description Paginated set of `MedicalFacilityEventWithFacilityResource` */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        data: (components["schemas"]["MedicalFacilityEventResource"] & Record<string, never>)[];
+                        data: components["schemas"]["MedicalFacilityEventWithFacilityResource"][];
                         links: {
                             first: string | null;
                             last: string | null;
@@ -774,22 +819,40 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
-                            prefectures: unknown[];
-                            institution_types: unknown[];
-                            statuses: unknown[];
-                            bureaus: unknown[];
-                            department_categories: unknown[];
-                            event_types: unknown[];
-                            geocode_levels: unknown[];
-                            designation_reasons: [
-                                "新規",
-                                "組織変更",
-                                "交代",
-                                "移動",
-                                "移転",
-                                "その他",
-                                "継承"
-                            ];
+                            prefectures: {
+                                code: string;
+                                label: string;
+                                bureau: {
+                                    code: number;
+                                    label: string;
+                                };
+                            }[];
+                            institution_types: {
+                                code: number;
+                                label: string;
+                            }[];
+                            statuses: {
+                                code: number;
+                                label: string;
+                            }[];
+                            bureaus: {
+                                code: number;
+                                label: string;
+                            }[];
+                            department_categories: {
+                                code: number;
+                                label: string;
+                            }[];
+                            event_types: {
+                                code: number;
+                                label: string;
+                            }[];
+                            geocode_levels: {
+                                code: number;
+                                label: string;
+                            }[];
+                            /** @description 代表的な登録理由（元データは自由記述） */
+                            designation_reasons: string[];
                         };
                     };
                 };
