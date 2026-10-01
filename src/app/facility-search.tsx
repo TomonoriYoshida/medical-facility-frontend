@@ -8,6 +8,7 @@ import Pagination, { ResultSummary } from "@/components/pagination";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import { useFacilities, useOptions } from "@/lib/api/queries";
 import type { FacilityListQuery } from "@/lib/api/types";
+import { hasDepartmentFilter } from "@/lib/departments";
 
 const perPage = 20;
 
@@ -24,15 +25,6 @@ const filterKeys = [
   "sort",
 ] as const;
 
-/**
- * Institution types (App\Enums\InstitutionType) whose departments can't narrow
- * a search: 薬局 has none, and 歯科診療所 are nearly all 歯科.
- */
-const typesWithoutDepartmentFilter = ["3", "4"];
-
-function hasDepartmentFilter(institutionType: string | null): boolean {
-  return !typesWithoutDepartmentFilter.includes(institutionType ?? "");
-}
 
 const labelClass = "block text-xs font-bold text-accent";
 

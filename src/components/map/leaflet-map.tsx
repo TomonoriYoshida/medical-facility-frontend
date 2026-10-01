@@ -99,6 +99,10 @@ export default function LeafletMap({
     return () => {
       map.remove();
       mapRef.current = null;
+      // A new map (e.g. React's dev-mode remount) has nothing drawn yet, so
+      // the "already drawn" checks below must not skip it.
+      drawnMarkersRef.current = null;
+      fittedRadiusRef.current = undefined;
     };
     // The map is created once; later center/zoom changes are applied below.
     // eslint-disable-next-line react-hooks/exhaustive-deps

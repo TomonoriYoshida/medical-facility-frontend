@@ -131,6 +131,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/stats/facilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 施設数の集計
+         * @description 絞り込んだ施設を `group_by` ごとに数えます。絞り込みの条件は一覧APIと同じです。
+         *     「期間内に新規開業した施設」は、`designation_reason=新規` と `designated_from`・`designated_to` で数えます
+         *     （保険医療機関の指定は6年ごとに更新されますが、指定年月日は最初の指定日のままです）。
+         *
+         *     - `month`: 期間内のすべての月を古い順に返します（施設がない月は0）。
+         *     - `municipality`: 施設数の多い順です。住所から市区町村を判定できない施設は `key`・`label` が null の1件にまとめます。
+         *     - `department_category`: 施設数の多い順です。1つの施設が複数の診療科目に数えられるため、`count` の合計は `meta.total` と一致しません。
+         */
+        get: operations["v1.stats.facilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/options": {
         parameters: {
             query?: never;
@@ -163,6 +189,12 @@ export interface components {
          * @enum {integer}
          */
         DepartmentBaseCategory: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26;
+        /**
+         * FacilityStatsGrouping
+         * @description What GET /api/v1/stats/facilities counts facilities by (`group_by`).
+         * @enum {string}
+         */
+        FacilityStatsGrouping: "month" | "municipality" | "department_category";
         /**
          * InstitutionType
          * @enum {integer}
@@ -765,6 +797,97 @@ export interface operations {
                             to: number | null;
                             /** @description Total number of items being paginated. */
                             total: number;
+                            attribution: {
+                                /** @constant */
+                                notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                license: {
+                                    /** @constant */
+                                    name: "公共データ利用規約（第1.0版）";
+                                    /** @constant */
+                                    url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
+                                };
+                                /** @constant */
+                                disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
+                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                medical_info_net_source: {
+                                    /** @constant */
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                sources: {
+                                    bureau: string;
+                                    url: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.stats.facilities": {
+        parameters: {
+            query: {
+                /**
+                 * @description 集計の単位。`month`（指定年月日の月）、`municipality`（市区町村）、`department_category`（診療科目の大分類）。
+                 *     `month` のときは `designated_from`・`designated_to` が必須で、期間は60か月まで
+                 */
+                group_by: components["schemas"]["FacilityStatsGrouping"];
+                /** @description 都道府県コード（JIS X 0401の2桁、01〜47） */
+                prefecture_code?: components["schemas"]["Prefecture"];
+                /** @description 市区町村コード（全国地方公共団体コード5桁。例: 13101 千代田区） */
+                municipality_code?: string;
+                /** @description 施設種別 */
+                institution_type?: components["schemas"]["InstitutionType"];
+                /** @description 指定状態 */
+                status?: components["schemas"]["MedicalFacilityStatus"];
+                /** @description 診療科目の大分類 */
+                department_category?: components["schemas"]["DepartmentBaseCategory"];
+                /**
+                 * @description 登録理由（`designation_history` の `reason`）。例: 新規、交代、組織変更、移転。
+                 *     指定年月日と組み合わせると「期間内に新規開業した施設」を数えられる
+                 */
+                designation_reason?: string;
+                /** @description 指定年月日がこの日以降（YYYY-MM-DD）。`group_by=month` では必須 */
+                designated_from?: string;
+                /** @description 指定年月日がこの日以前（YYYY-MM-DD）。`group_by=month` では必須 */
+                designated_to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /**
+                         * @description 集計結果。`key` は `month` なら `YYYY-MM`、`municipality` なら市区町村コード、
+                         *     `department_category` なら診療科目のコード
+                         */
+                        data: {
+                            key: number | string | null;
+                            label: string | null;
+                            count: number;
+                        }[];
+                        meta: {
+                            /** @description 絞り込んだ施設の数 */
+                            total: number;
+                            group_by: string;
                             attribution: {
                                 /** @constant */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";

@@ -37,6 +37,11 @@ const endpoints = [
     example: "/v1/medical-facility-events?per_page=5",
   },
   {
+    path: "/v1/stats/facilities",
+    description: "施設数の集計（月・市区町村・診療科ごと。ダッシュボードで使用）",
+    example: "/v1/stats/facilities?group_by=municipality&prefecture_code=13&department_category=5",
+  },
+  {
     path: "/v1/options",
     description: "都道府県・種別・診療科などの選択肢（コードと表示名）",
     example: "/v1/options",

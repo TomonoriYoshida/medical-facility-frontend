@@ -75,6 +75,12 @@ export type ExportsResponse = Omit<ExportsJson, "data"> & {
   data: Omit<ExportsJson["data"], "files"> & { files: ExportFile[] };
 };
 
+export type StatsQuery = operations["v1.stats.facilities"]["parameters"]["query"];
+
+export type StatsResponse = JsonOf<"v1.stats.facilities">;
+
+export type StatsGroup = StatsResponse["data"][number];
+
 export type FacilityListQuery = NonNullable<
   operations["v1.medical-facilities.index"]["parameters"]["query"]
 >;
