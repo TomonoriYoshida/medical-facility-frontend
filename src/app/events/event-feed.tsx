@@ -8,10 +8,15 @@ import Pagination, { ResultSummary } from "@/components/pagination";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import { useEvents, useOptions } from "@/lib/api/queries";
 import type { EventListQuery } from "@/lib/api/types";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatLocalDate } from "@/lib/format";
 
 const perPage = 20;
 const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+/** An ISO 8601 timestamp (as the dashboard links with), or null for anything else. */
+function validTimestamp(value: string | null): string | null {
+  return value && /^\d{4}-\d{2}-\d{2}T/.test(value) && !Number.isNaN(Date.parse(value)) ? value : null;
+}
 
 function toApiQuery(searchParams: URLSearchParams): EventListQuery & { page?: number } {
   const query: Record<string, string | number> = { per_page: perPage };
@@ -30,6 +35,10 @@ function toApiQuery(searchParams: URLSearchParams): EventListQuery & { page?: nu
   const occurredFrom = searchParams.get("occurred_from");
   if (occurredFrom && isoDatePattern.test(occurredFrom)) {
     query.occurred_from = occurredFrom;
+  }
+  const detectedSince = validTimestamp(searchParams.get("detected_since"));
+  if (detectedSince) {
+    query.detected_since = detectedSince;
   }
   const page = Number(searchParams.get("page"));
   if (Number.isInteger(page) && page > 1) {
@@ -69,6 +78,7 @@ export default function EventFeed() {
   // The same check as the query, so the chip never claims a filter that isn't applied.
   const occurredFromParam = searchParams.get("occurred_from");
   const occurredFrom = occurredFromParam && isoDatePattern.test(occurredFromParam) ? occurredFromParam : null;
+  const detectedSince = validTimestamp(searchParams.get("detected_since"));
 
   return (
     <>
@@ -139,6 +149,19 @@ export default function EventFeed() {
           <button
             type="button"
             onClick={() => setFilter("occurred_from", "")}
+            className="text-accent underline underline-offset-2 hover:opacity-80"
+          >
+            解除
+          </button>
+        </p>
+      )}
+
+      {detectedSince && (
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+          <span className="bg-band px-2 py-0.5 text-accent">{formatLocalDate(detectedSince)}の閲覧以降に取り込んだ分</span>
+          <button
+            type="button"
+            onClick={() => setFilter("detected_since", "")}
             className="text-accent underline underline-offset-2 hover:opacity-80"
           >
             解除

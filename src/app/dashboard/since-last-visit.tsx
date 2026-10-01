@@ -4,41 +4,41 @@ import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
 import { useEvents } from "@/lib/api/queries";
 import type { EventListQuery } from "@/lib/api/types";
-import { formatDate, numberFormatter } from "@/lib/format";
+import { formatLocalDate, numberFormatter } from "@/lib/format";
 
-const lastVisitKey = "dashboard:lastVisit";
-const previousVisitKey = "dashboard:previousVisit";
+// Timestamps (ISO 8601). The date-only keys used before ("dashboard:lastVisit")
+// can't express "after the visit", so they are left unused.
+const lastVisitKey = "dashboard:lastVisitAt";
+const previousVisitKey = "dashboard:previousVisitAt";
 /** MedicalFacilityEventType::Created */
 const createdEvent = 1;
 
-function today(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+function isToday(timestamp: string): boolean {
+  return new Date(timestamp).toDateString() === new Date().toDateString();
 }
 
 /**
- * The day of the visit before today's. Stored per browser only; storage can be
- * unavailable (private windows, blocked site data), which just hides the panel.
+ * The last page load of the visit day before today's. Stored per browser only;
+ * storage can be unavailable (private windows, blocked site data), which just
+ * hides the panel.
  */
 function readPreviousVisit(): string | null {
   try {
     const lastVisit = localStorage.getItem(lastVisitKey);
-    return lastVisit !== null && lastVisit !== today() ? lastVisit : localStorage.getItem(previousVisitKey);
+    return lastVisit !== null && !isToday(lastVisit) ? lastVisit : localStorage.getItem(previousVisitKey);
   } catch {
     return null;
   }
 }
 
-/** Shifts the dates once per day, so reloading today keeps the same "previous". */
+/** Shifts the visits once per day, so reloading today keeps the same "previous". */
 function recordVisit(): void {
   try {
     const lastVisit = localStorage.getItem(lastVisitKey);
-    if (lastVisit !== today()) {
-      if (lastVisit !== null) {
-        localStorage.setItem(previousVisitKey, lastVisit);
-      }
-      localStorage.setItem(lastVisitKey, today());
+    if (lastVisit !== null && !isToday(lastVisit)) {
+      localStorage.setItem(previousVisitKey, lastVisit);
     }
+    localStorage.setItem(lastVisitKey, new Date().toISOString());
   } catch {
     // Storage unavailable: nothing to remember.
   }
@@ -51,8 +51,10 @@ type Props = {
 
 /**
  * Facilities that newly appeared in the published lists since the visitor's
- * previous visit. Uses the event feed (when a facility first showed up in the
- * data), not designated_on, which can be months older than its publication.
+ * previous visit. Counted by when the API detected them (detected_since), not
+ * by the publication date (occurred_on): a list dated "as of the 1st" is
+ * imported days or weeks later, so it can arrive after a visit that came later
+ * than its date. designated_on is older still.
  */
 /** The stored dates only change in recordVisit, after the value has been read. */
 function subscribe(): () => void {
@@ -76,7 +78,7 @@ export default function SinceLastVisit({ prefectureCode, institutionType }: Prop
     filters.institution_type = Number(institutionType);
   }
   const newSince = useEvents(
-    { ...filters, occurred_from: previousVisit ?? undefined, per_page: 1 } as EventListQuery,
+    { ...filters, detected_since: previousVisit ?? undefined, per_page: 1 } as EventListQuery,
     { enabled: typeof previousVisit === "string" },
   );
 
@@ -91,7 +93,7 @@ export default function SinceLastVisit({ prefectureCode, institutionType }: Prop
     );
   }
 
-  const feedParams = new URLSearchParams({ occurred_from: previousVisit });
+  const feedParams = new URLSearchParams({ detected_since: previousVisit });
   for (const [key, value] of Object.entries(filters)) {
     feedParams.set(key, String(value));
   }
@@ -99,7 +101,7 @@ export default function SinceLastVisit({ prefectureCode, institutionType }: Prop
   return (
     <p className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 border border-border bg-surface px-4 py-3 text-sm">
       <span>
-        前回の閲覧（{formatDate(previousVisit)}）以降に新しく掲載された施設：
+        前回の閲覧（{formatLocalDate(previousVisit)}）以降に新しく掲載された施設：
         <span className="ml-1 text-lg font-bold text-accent">
           {newSince.data ? numberFormatter.format(newSince.data.meta.total) : "…"}
         </span>
@@ -109,7 +111,7 @@ export default function SinceLastVisit({ prefectureCode, institutionType }: Prop
         一覧を見る →
       </Link>
       <span className="w-full text-xs text-muted">
-        毎月の公開データで新しく見つかった施設の数です（都道府県・種別の条件だけを反映します）。
+        前回の閲覧の後に取り込んだ公開データで、新しく見つかった施設の数です（都道府県・種別の条件だけを反映します）。
       </span>
     </p>
   );

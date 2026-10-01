@@ -28,6 +28,12 @@ export function formatDate(value: string | null | undefined): string {
   return `${year}年${Number(month)}月${Number(day)}日`;
 }
 
+/** The date of a timestamp in the visitor's own time zone (formatDate reads the UTC date of one). */
+export function formatLocalDate(timestamp: string): string {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+}
+
 export function formatBedCounts(bedCounts: Record<string, number> | null): string {
   if (!bedCounts || Object.keys(bedCounts).length === 0) {
     return "—";
