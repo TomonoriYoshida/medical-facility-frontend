@@ -23,6 +23,8 @@ const linkClass = "text-accent underline underline-offset-2 hover:opacity-80";
 
 /** GeocodeLevel::Town: the town's representative point, not the facility's. */
 const townLevel = 5;
+/** GeocodeLevel::MedicalInfoNet: a source (MHLW 医療情報ネット's coordinates), not a precision. */
+const medicalInfoNetLevel = 6;
 
 export default function FacilityDetail() {
   const id = parseId(useSearchParams().get("id"));
@@ -126,9 +128,17 @@ export default function FacilityDetail() {
               className="mt-3 h-72 sm:h-96"
             />
             <p className="mt-1 text-xs leading-5 text-muted">
-              ※ 位置の精度：{data.location.level.label}
-              {data.location.level.code === townLevel && "（町や大字の中心付近で、施設の位置ではありません）"}
-              。住所からデジタル庁のアドレス・ベース・レジストリで求めた位置で、建物の位置とずれることがあります。
+              {data.location.level.code === medicalInfoNetLevel ? (
+                <>
+                  ※ 位置：厚生労働省「医療情報ネット」が公開する座標です（住所からは町丁目までしか求められなかったため）。建物の位置とずれることがあります。
+                </>
+              ) : (
+                <>
+                  ※ 位置の精度：{data.location.level.label}
+                  {data.location.level.code === townLevel && "（町や大字の中心付近で、施設の位置ではありません）"}
+                  。住所からデジタル庁のアドレス・ベース・レジストリで求めた位置で、建物の位置とずれることがあります。
+                </>
+              )}
             </p>
             <p className="mt-2 text-sm">
               <Link
