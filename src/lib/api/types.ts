@@ -23,6 +23,8 @@ export type MedicalFacility = Omit<
   | "designation_history"
   | "bed_counts"
   | "department_categories"
+  | "municipality"
+  | "location"
 > & {
   institution_type: CodeLabel;
   status: CodeLabel;
@@ -32,6 +34,9 @@ export type MedicalFacility = Omit<
   /** Bed type (一般, 療養, …) to count. */
   bed_counts: Record<string, number> | null;
   department_categories: CodeLabel[];
+  municipality: { code: string; label: string } | null;
+  /** Coordinates found from the address, and how precisely (住居, 街区, 地番, 町丁目…). */
+  location: { latitude: number; longitude: number; level: CodeLabel } | null;
 };
 
 export type ChangeValue =
@@ -76,6 +81,7 @@ export type Options = {
   bureaus: CodeLabel[];
   department_categories: CodeLabel[];
   event_types: CodeLabel[];
+  geocode_levels: CodeLabel[];
   designation_reasons: string[];
 };
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { MedicalFacility } from "@/lib/api/types";
-import { formatDate, totalBeds } from "@/lib/format";
+import { formatDate, formatDistance, totalBeds } from "@/lib/format";
 import DepartmentTags from "./department-tags";
 import StatusBadge from "./status-badge";
 
@@ -25,6 +25,9 @@ export default function FacilityCard({ facility }: { facility: MedicalFacility }
         <StatusBadge status={facility.status} />
       </div>
       <p className="mt-2 text-sm">
+        {facility.distance !== undefined && (
+          <span className="mr-2 font-bold text-accent">約{formatDistance(facility.distance)}</span>
+        )}
         {facility.postal_code && `〒${facility.postal_code} `}
         {facility.prefecture.label}
         {facility.address}

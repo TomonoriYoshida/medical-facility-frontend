@@ -18,6 +18,11 @@ export default function AttributionNotice({ attribution }: { attribution: Attrib
           <ExternalLink url={attribution.license.url}>{attribution.license.name}</ExternalLink>
         </li>
         <li>{attribution.disclaimer}</li>
+        <li>
+          市区町村・位置：
+          <ExternalLink url={attribution.address_source.url}>{attribution.address_source.name}</ExternalLink>
+          （CC BY 4.0）
+        </li>
       </ul>
       <details className="mt-1">
         <summary className="cursor-pointer text-accent">出典元（各地方厚生局）</summary>

@@ -2,10 +2,12 @@
 
 [医療施設マスタAPI](https://github.com/TomonoriYoshida/medical-facility-master-api-laravel) のデモ用フロントエンドです。
 全国約22万の病院・診療所・歯科診療所・薬局を検索し、施設の詳細や掲載・変更・廃止の履歴を閲覧できます。
+地図の中心や現在地から近くの施設を探すこともできます（APIの近隣検索）。
 
 - Next.js 16（App Router、`output: "export"` による静的書き出し）/ React 19 / TypeScript / Tailwind CSS 4
 - データ取得はブラウザからAPIを直接呼び出し（TanStack Query）
 - APIの型は、APIが生成するOpenAPI仕様から `openapi-typescript` で生成
+- 地図は [Leaflet](https://leafletjs.com/) と[地理院タイル](https://maps.gsi.go.jp/development/ichiran.html)（淡色地図）。Leaflet は `window` を使うため、`next/dynamic`（`ssr: false`）でブラウザでだけ読み込む
 - GitHub Pagesへデプロイ（`.github/workflows/deploy.yml`）
 
 ## ローカルで動かす
