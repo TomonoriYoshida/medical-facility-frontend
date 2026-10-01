@@ -131,6 +131,33 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/stats/facility-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 新規・廃止の集計
+         * @description 毎月の公開データを比較して見つかった施設の新規・廃止（変化の一覧と同じ「検知」の記録）を、
+         *     `group_by` ごとに数えます。初回取込と取り込み直し（再処理）の記録は含みません。
+         *     記録は運用を始めてから蓄積されるため、最初の1〜2か月は0件になります。
+         *
+         *     - `month`: 期間内のすべての月を古い順に返します（変化がない月は0）。月は変化が載った公開データの月で、実際の開業・廃止の月ではありません。
+         *     - `municipality`: 件数の多い順です。住所から市区町村を判定できない施設は `key`・`label` が null の1件にまとめます。
+         *
+         *     施設の絞り込み（都道府県・市区町村・種別・診療科目）は、施設の現在の内容で判定します。
+         */
+        get: operations["v1.stats.facility-events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/stats/facilities": {
         parameters: {
             query?: never;
@@ -797,6 +824,89 @@ export interface operations {
                             to: number | null;
                             /** @description Total number of items being paginated. */
                             total: number;
+                            attribution: {
+                                /** @constant */
+                                notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                license: {
+                                    /** @constant */
+                                    name: "公共データ利用規約（第1.0版）";
+                                    /** @constant */
+                                    url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
+                                };
+                                /** @constant */
+                                disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
+                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                medical_info_net_source: {
+                                    /** @constant */
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                sources: {
+                                    bureau: string;
+                                    url: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.stats.facility-events": {
+        parameters: {
+            query: {
+                /**
+                 * @description 集計の単位。`month`（変化が載った公開データの月）、`municipality`（施設の市区町村）。
+                 *     `month` のときは `occurred_from`・`occurred_to` が必須で、期間は60か月まで
+                 */
+                group_by: "month" | "municipality";
+                /** @description 変化の種類（1: 新規 / 2: 廃止） */
+                event_type: 1 | 2;
+                /** @description 変化が載った公開データの日付がこの日以降（YYYY-MM-DD）。`group_by=month` では必須 */
+                occurred_from?: string;
+                /** @description 変化が載った公開データの日付がこの日以前（YYYY-MM-DD）。`group_by=month` では必須 */
+                occurred_to?: string;
+                /** @description 施設の都道府県コード（JIS X 0401の2桁、01〜47） */
+                prefecture_code?: components["schemas"]["Prefecture"];
+                /** @description 施設の市区町村コード（全国地方公共団体コード5桁） */
+                municipality_code?: string;
+                /** @description 施設の種別 */
+                institution_type?: components["schemas"]["InstitutionType"];
+                /** @description 施設の診療科目の大分類（現在の診療科目で判定） */
+                department_category?: components["schemas"]["DepartmentBaseCategory"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 集計結果。`key` は `month` なら `YYYY-MM`、`municipality` なら市区町村コード */
+                        data: {
+                            key: string | null;
+                            label: string | null;
+                            count: number;
+                        }[];
+                        meta: {
+                            /** @description 絞り込んだ変化の数 */
+                            total: number;
+                            group_by: string;
                             attribution: {
                                 /** @constant */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";

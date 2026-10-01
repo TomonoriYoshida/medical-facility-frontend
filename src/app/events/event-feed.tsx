@@ -8,8 +8,10 @@ import Pagination, { ResultSummary } from "@/components/pagination";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import { useEvents, useOptions } from "@/lib/api/queries";
 import type { EventListQuery } from "@/lib/api/types";
+import { formatDate } from "@/lib/format";
 
 const perPage = 20;
+const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 function toApiQuery(searchParams: URLSearchParams): EventListQuery & { page?: number } {
   const query: Record<string, string | number> = { per_page: perPage };
@@ -24,6 +26,10 @@ function toApiQuery(searchParams: URLSearchParams): EventListQuery & { page?: nu
   }
   if (institutionType) {
     query.institution_type = Number(institutionType);
+  }
+  const occurredFrom = searchParams.get("occurred_from");
+  if (occurredFrom && isoDatePattern.test(occurredFrom)) {
+    query.occurred_from = occurredFrom;
   }
   const page = Number(searchParams.get("page"));
   if (Number.isInteger(page) && page > 1) {
@@ -60,6 +66,9 @@ export default function EventFeed() {
   const selectClass =
     "rounded-sm border border-border bg-background px-2 py-1.5 text-sm focus:border-accent focus:outline-none";
   const activeEventType = searchParams.get("event_type") ?? "";
+  // The same check as the query, so the chip never claims a filter that isn't applied.
+  const occurredFromParam = searchParams.get("occurred_from");
+  const occurredFrom = occurredFromParam && isoDatePattern.test(occurredFromParam) ? occurredFromParam : null;
 
   return (
     <>
@@ -123,6 +132,19 @@ export default function EventFeed() {
           </select>
         </div>
       </div>
+
+      {occurredFrom && (
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+          <span className="bg-band px-2 py-0.5 text-accent">{formatDate(occurredFrom)}以降の公開分</span>
+          <button
+            type="button"
+            onClick={() => setFilter("occurred_from", "")}
+            className="text-accent underline underline-offset-2 hover:opacity-80"
+          >
+            解除
+          </button>
+        </p>
+      )}
 
       <section aria-live="polite" className="mt-6">
         {events.isPending ? (

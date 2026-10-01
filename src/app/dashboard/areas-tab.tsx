@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef } from "react";
 import AttributionNotice from "@/components/attribution-notice";
+import MonthColumns from "@/components/charts/month-columns";
 import { SectionHeading } from "@/components/headings";
 import FacilityMap, { type MapMarker } from "@/components/map/facility-map";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
-import { useFacilities, useFacilityStats, useOptions } from "@/lib/api/queries";
-import type { FacilityListQuery, StatsQuery } from "@/lib/api/types";
+import { useEventStats, useFacilities, useFacilityStats, useOptions } from "@/lib/api/queries";
+import type { EventStatsQuery, FacilityListQuery, StatsQuery } from "@/lib/api/types";
 import { hasDepartmentFilter } from "@/lib/departments";
 import { numberFormatter } from "@/lib/format";
 import { recentMonths } from "@/lib/periods";
@@ -20,6 +21,11 @@ const activeStatus = 1;
 const openingMonths = 12;
 /** The list API's per_page limit; the map shows at most this many. */
 const maxMapFacilities = 100;
+/** InstitutionType::Hospital, and the widest radius the nearby page offers. */
+const hospitalType = 1;
+const hospitalRadius = 5000;
+/** MedicalFacilityEventType::Removed */
+const closedEvent = 2;
 
 export default function AreasTab() {
   const { get, update } = useDashboardParams();
@@ -58,7 +64,45 @@ export default function AreasTab() {
     { enabled },
   );
 
+  // Closures exist only as detected events (4-3); they accumulate from the first monthly update.
+  const closures = useEventStats(
+    {
+      ...filters,
+      group_by: "municipality",
+      event_type: closedEvent,
+      occurred_from: openingRange.from,
+      occurred_to: openingRange.to,
+    } as EventStatsQuery,
+    { enabled },
+  );
+  const openingsTrend = useFacilityStats(
+    {
+      ...filters,
+      group_by: "month",
+      designation_reason: "新規",
+      designated_from: openingRange.from,
+      designated_to: openingRange.to,
+    } as StatsQuery,
+    { enabled },
+  );
+  const closuresTrend = useEventStats(
+    {
+      ...filters,
+      group_by: "month",
+      event_type: closedEvent,
+      occurred_from: openingRange.from,
+      occurred_to: openingRange.to,
+    } as EventStatsQuery,
+    { enabled },
+  );
+
   const openingsByArea = new Map(openings.data?.data.map((group) => [group.key, group.count]));
+  const closuresByArea = new Map(closures.data?.data.map((group) => [group.key, group.count]));
+  const trendMax = Math.max(
+    0,
+    ...(openingsTrend.data?.data ?? []).map((group) => group.count),
+    ...(closuresTrend.data?.data ?? []).map((group) => group.count),
+  );
   const rows = facilities.data?.data ?? [];
   const maxCount = Math.max(1, ...rows.map((row) => row.count));
   const selected = rows.find((row) => row.key === area);
@@ -135,6 +179,7 @@ export default function AreasTab() {
                       <th>市区町村</th>
                       <th>指定中の施設</th>
                       <th>直近{openingMonths}か月の新規開業</th>
+                      <th>直近{openingMonths}か月の廃止</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -170,12 +215,72 @@ export default function AreasTab() {
                             ? numberFormatter.format(openingsByArea.get(row.key) ?? 0)
                             : "…"}
                         </td>
+                        <td className="text-right tabular-nums">
+                          {closures.isError
+                            ? "—"
+                            : closures.data && !closures.isPlaceholderData
+                              ? numberFormatter.format(closuresByArea.get(row.key === null ? null : String(row.key)) ?? 0)
+                              : "…"}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
+            <p className="mt-1 text-xs text-muted">
+              ※ 廃止は、毎月の公開データを前回分と比較して検知した件数です。記録は運用を始めてから蓄積されます。
+            </p>
+            {closures.isError && (
+              <p role="alert" className="mt-1 text-xs text-danger">
+                廃止の件数を取得できませんでした（「—」の列）。時間をおいて再度お試しください。
+              </p>
+            )}
+          </section>
+
+          <section className="mt-10">
+            <SectionHeading>開業と廃業の推移（直近{openingMonths}か月）</SectionHeading>
+            <p className="mt-2 text-sm text-muted">
+              同じ目盛りで並べています。新規開業は指定年月日の月、廃止は公開データに載った月で数えています。
+            </p>
+            <div className="mt-4 grid gap-8 md:grid-cols-2">
+              <figure className="min-w-0">
+                <figcaption className="mb-2 text-sm font-bold">新規開業</figcaption>
+                {openingsTrend.isError ? (
+                  <ErrorState error={openingsTrend.error} />
+                ) : openingsTrend.data ? (
+                  <MonthColumns
+                    groups={openingsTrend.data.data}
+                    measure="新規開業"
+                    scaleMax={trendMax}
+                    isUpdating={openingsTrend.isPlaceholderData}
+                  />
+                ) : (
+                  <LoadingState />
+                )}
+              </figure>
+              <figure className="min-w-0">
+                <figcaption className="mb-2 text-sm font-bold">廃止</figcaption>
+                {closuresTrend.isError ? (
+                  <ErrorState error={closuresTrend.error} />
+                ) : !closuresTrend.data ? (
+                  <LoadingState />
+                ) : closuresTrend.data.meta.total === 0 ? (
+                  <EmptyState>
+                    この条件で検知した廃止はまだありません。
+                    <br />
+                    廃止は毎月の公開データの比較で記録され、運用開始から蓄積されます。
+                  </EmptyState>
+                ) : (
+                  <MonthColumns
+                    groups={closuresTrend.data.data}
+                    measure="廃止"
+                    scaleMax={trendMax}
+                    isUpdating={closuresTrend.isPlaceholderData}
+                  />
+                )}
+              </figure>
+            </div>
           </section>
 
           <AttributionNotice attribution={facilities.data.meta.attribution} />
@@ -251,6 +356,13 @@ function AreaMap({
       nearbyParams.set(key, String(filters[key]));
     }
   }
+  // Hospitals are fewer and farther apart, so search a wider radius (4-4).
+  const hospitalParams = new URLSearchParams({
+    lat: nearbyParams.get("lat") ?? "",
+    lng: nearbyParams.get("lng") ?? "",
+    institution_type: String(hospitalType),
+    radius: String(hospitalRadius),
+  });
   const total = facilities.data.meta.total;
 
   return (
@@ -269,9 +381,15 @@ function AreaMap({
         {total > maxMapFacilities && `のうち${maxMapFacilities}件`}
         を表示しています。位置がわからない施設は表示されません。
       </p>
-      <p className="mt-2 text-sm">
+      <p className="mt-2 flex flex-col gap-1 text-sm sm:flex-row sm:gap-6">
         <Link href={`/nearby?${nearbyParams.toString()}`} className="text-accent underline underline-offset-2 hover:opacity-80">
           この地域の中心付近で、近くの施設をさらに探す →
+        </Link>
+        <Link
+          href={`/nearby?${hospitalParams.toString()}`}
+          className="text-accent underline underline-offset-2 hover:opacity-80"
+        >
+          近くの病院（連携先の候補）を探す →
         </Link>
       </p>
     </>

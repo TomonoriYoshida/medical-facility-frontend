@@ -12,7 +12,9 @@ import type { FacilityListQuery, StatsQuery } from "@/lib/api/types";
 import { hasDepartmentFilter } from "@/lib/departments";
 import { formatDate, numberFormatter } from "@/lib/format";
 import { precedingMonths, recentMonths } from "@/lib/periods";
+import CsvExport from "./csv-export";
 import FilterSelect from "./filter-select";
+import SinceLastVisit from "./since-last-visit";
 import { useDashboardParams } from "./use-dashboard-params";
 
 const periodOptions = [12, 24, 36, 60];
@@ -34,8 +36,13 @@ export default function OpeningsTab() {
   const pageParam = Number(get("page"));
   const page = Number.isInteger(pageParam) && pageParam > 1 ? pageParam : 1;
 
+  // 新規 = new openings; 交代 / 継承 are a new head taking over (3-4), etc.
+  const reason = get("reason") || newOpeningReason;
+  const isNewOpening = reason === newOpeningReason;
+  const measure = isNewOpening ? "新規開業" : `登録理由「${reason}」`;
+
   // The same slice for every chart and the list, so their numbers agree.
-  const filters: Record<string, string | number> = { designation_reason: newOpeningReason };
+  const filters: Record<string, string | number> = { designation_reason: reason };
   for (const key of ["prefecture_code", "municipality_code", "institution_type", "department_category"]) {
     const value = get(key);
     if (value && (key !== "department_category" || hasDepartmentFilter(institutionType))) {
@@ -66,14 +73,15 @@ export default function OpeningsTab() {
     { group_by: "municipality", municipality_code: municipalityCode } as StatsQuery,
     { enabled: municipalityCode !== "" },
   );
-  const openings = useFacilities({
+  const listQuery = {
     ...filters,
     designated_from: range.from,
     designated_to: range.to,
     sort: "-designated_on",
-    per_page: listSize,
-    page,
-  } as FacilityListQuery & { page: number });
+  } as FacilityListQuery;
+  const openings = useFacilities({ ...listQuery, per_page: listSize, page } as FacilityListQuery & {
+    page: number;
+  });
 
   function hrefForPage(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -92,7 +100,18 @@ export default function OpeningsTab() {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-x-3 gap-y-2 border border-border bg-surface p-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 border border-border bg-surface p-4 md:grid-cols-5">
+        <FilterSelect
+          id="reason"
+          label="登録理由"
+          value={reason}
+          allLabel=""
+          options={(options.data?.designation_reasons ?? [newOpeningReason]).map((value) => ({
+            value,
+            label: value === newOpeningReason ? "新規（開業）" : value,
+          }))}
+          onChange={(value) => update({ reason: value === newOpeningReason ? null : value })}
+        />
         <FilterSelect
           id="months"
           label="期間"
@@ -148,7 +167,7 @@ export default function OpeningsTab() {
       ) : (
         <>
           <section className="mt-6" aria-live="polite">
-            <SectionHeading>期間内の新規開業</SectionHeading>
+            <SectionHeading>期間内の{measure}</SectionHeading>
             <div className="mt-3 flex flex-wrap items-end gap-x-8 gap-y-2">
               <p>
                 <span className="text-5xl font-bold text-accent">
@@ -177,13 +196,16 @@ export default function OpeningsTab() {
                 </div>
               </dl>
             </div>
+            {isNewOpening && (
+              <SinceLastVisit prefectureCode={get("prefecture_code")} institutionType={institutionType} />
+            )}
           </section>
 
           <section className="mt-10">
-            <SectionHeading>月別の新規開業数</SectionHeading>
+            <SectionHeading>月別の{measure}の数</SectionHeading>
             <div className="mt-4">
               {monthly.data ? (
-                <MonthColumns groups={monthly.data.data} measure="新規開業" isUpdating={monthly.isPlaceholderData} />
+                <MonthColumns groups={monthly.data.data} measure={measure} isUpdating={monthly.isPlaceholderData} />
               ) : (
                 <LoadingState />
               )}
@@ -193,7 +215,7 @@ export default function OpeningsTab() {
 
           {!municipalityCode && (
             <section className="mt-10">
-              <SectionHeading>新規開業の多い市区町村</SectionHeading>
+              <SectionHeading>{measure}の多い市区町村</SectionHeading>
               <p className="mt-2 text-sm text-muted">
                 上位{rankingSize}件です。市区町村名を選ぶと、ダッシュボード全体をその市区町村に絞り込みます。
               </p>
@@ -203,7 +225,7 @@ export default function OpeningsTab() {
                 ) : !byMunicipality.data ? (
                   <LoadingState />
                 ) : byMunicipality.data.data.length === 0 ? (
-                  <EmptyState>期間内の新規開業はありません。</EmptyState>
+                  <EmptyState>期間内の{measure}はありません。</EmptyState>
                 ) : (
                   <RankingBars
                     groups={byMunicipality.data.data.slice(0, rankingSize)}
@@ -223,15 +245,22 @@ export default function OpeningsTab() {
           )}
 
           <section className="mt-10">
-            <SectionHeading>新規開業の一覧</SectionHeading>
+            <SectionHeading>{measure}の一覧</SectionHeading>
             <p className="mt-2 text-sm text-muted">指定年月日の新しい順です。</p>
+            {openings.data && !openings.isPlaceholderData && (
+              <CsvExport
+                query={listQuery}
+                total={openings.data.meta.total}
+                filename={`${measure.replace(/[「」]/g, "")}_${range.from}_${range.to}.csv`}
+              />
+            )}
             <div className="mt-3">
               {openings.isError ? (
                 <ErrorState error={openings.error} />
               ) : !openings.data ? (
                 <LoadingState />
               ) : openings.data.data.length === 0 ? (
-                <EmptyState>期間内の新規開業はありません。</EmptyState>
+                <EmptyState>期間内の{measure}はありません。</EmptyState>
               ) : (
                 <>
                   <ul className={`grid gap-3 transition-opacity ${openings.isPlaceholderData ? "opacity-60" : ""}`}>
