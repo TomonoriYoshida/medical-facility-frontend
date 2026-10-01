@@ -1,43 +1,24 @@
 import type { components, operations } from "./schema";
 
 type Schemas = components["schemas"];
+type JsonOf<Operation extends keyof operations> = operations[Operation]["responses"] extends {
+  200: { content: { "application/json": infer Json } };
+}
+  ? Json
+  : never;
 
 /*
- * Scramble infers some shapes too loosely (bed_counts as unknown[], the
- * options lists as unknown[], the event feed items intersected with
- * Record<string, never>), so those are pinned here to what the API
- * actually returns. Everything else comes straight from the generated schema.
+ * Types come from the OpenAPI spec the API generates. Only two shapes are still
+ * pinned by hand because the spec can't describe them precisely: a change's
+ * old/new values (they take the shape of whichever attribute changed) and the
+ * export file list.
  */
 
 export type CodeLabel = { code: number; label: string };
 
-// date can be null: some source rows put the date in the reason column.
-export type DesignationHistoryEntry = { date: string | null; reason: string };
+export type MedicalFacility = Schemas["MedicalFacilityResource"];
 
-export type MedicalFacility = Omit<
-  Schemas["MedicalFacilityResource"],
-  | "institution_type"
-  | "status"
-  | "bureau"
-  | "prefecture"
-  | "designation_history"
-  | "bed_counts"
-  | "department_categories"
-  | "municipality"
-  | "location"
-> & {
-  institution_type: CodeLabel;
-  status: CodeLabel;
-  bureau: CodeLabel;
-  prefecture: { code: string; label: string };
-  designation_history: DesignationHistoryEntry[] | null;
-  /** Bed type (一般, 療養, …) to count. */
-  bed_counts: Record<string, number> | null;
-  department_categories: CodeLabel[];
-  municipality: { code: string; label: string } | null;
-  /** Coordinates found from the address, and how precisely (住居, 街区, 地番, 町丁目…). */
-  location: { latitude: number; longitude: number; level: CodeLabel } | null;
-};
+export type DesignationHistoryEntry = NonNullable<MedicalFacility["designation_history"]>[number];
 
 export type ChangeValue =
   | CodeLabel
@@ -53,37 +34,29 @@ export type FacilityChange = {
   new: ChangeValue;
 };
 
-export type MedicalFacilityEvent = Omit<
-  Schemas["MedicalFacilityEventResource"],
-  "changes" | "facility"
-> & {
+type WithChanges<Event extends { changes?: unknown }> = Omit<Event, "changes"> & {
   changes?: FacilityChange[];
-  facility?: MedicalFacility;
 };
 
-export type Attribution =
-  operations["v1.medical-facilities.index"]["responses"][200]["content"]["application/json"]["meta"]["attribution"];
+/** An event in one facility's history (no facility attached). */
+export type MedicalFacilityEvent = WithChanges<Schemas["MedicalFacilityEventResource"]>;
 
-export type PaginationMeta = Omit<
-  operations["v1.medical-facilities.index"]["responses"][200]["content"]["application/json"]["meta"],
-  "attribution"
+/** An event in the nationwide feed, which carries its facility. */
+export type MedicalFacilityEventWithFacility = WithChanges<
+  Schemas["MedicalFacilityEventWithFacilityResource"]
 >;
 
-export type Paginated<T> = {
-  data: T[];
-  meta: PaginationMeta & { attribution: Attribution };
+export type FacilityPage = JsonOf<"v1.medical-facilities.index">;
+
+export type EventPage = Omit<JsonOf<"v1.medical-facility-events.index">, "data"> & {
+  data: MedicalFacilityEventWithFacility[];
 };
 
-export type Options = {
-  prefectures: (Omit<CodeLabel, "code"> & { code: string; bureau: CodeLabel })[];
-  institution_types: CodeLabel[];
-  statuses: CodeLabel[];
-  bureaus: CodeLabel[];
-  department_categories: CodeLabel[];
-  event_types: CodeLabel[];
-  geocode_levels: CodeLabel[];
-  designation_reasons: string[];
-};
+export type Attribution = FacilityPage["meta"]["attribution"];
+
+export type PaginationMeta = Omit<FacilityPage["meta"], "attribution">;
+
+export type Options = JsonOf<"v1.options">["data"];
 
 export type ExportFile = {
   name: string;
@@ -96,10 +69,10 @@ export type ExportFile = {
   url: string;
 };
 
-export type ExportIndex = {
-  generated_at: string;
-  data_updated_at: string;
-  files: ExportFile[];
+type ExportsJson = JsonOf<"v1.exports.index">;
+
+export type ExportsResponse = Omit<ExportsJson, "data"> & {
+  data: Omit<ExportsJson["data"], "files"> & { files: ExportFile[] };
 };
 
 export type FacilityListQuery = NonNullable<

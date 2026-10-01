@@ -173,7 +173,7 @@ export default function FacilityDetail() {
                     <td className="whitespace-nowrap">
                       <time dateTime={entry.date ?? undefined}>{formatDate(entry.date)}</time>
                     </td>
-                    <td>{entry.reason}</td>
+                    <td>{entry.reason ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>

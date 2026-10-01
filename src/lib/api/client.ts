@@ -53,6 +53,15 @@ export async function unwrap<T>(
     throw new ApiError("アクセスが集中しています。1分ほど待ってから再度お試しください。", 429);
   }
 
+  // Laravel's validation messages are in English; the forms prevent most of these,
+  // so this is mainly a hand-edited URL.
+  if (result.response.status === 422) {
+    throw new ApiError(
+      "検索条件に誤りがあります。条件を見直してください（キーワードは5語まで）。",
+      422,
+    );
+  }
+
   if (result.data === undefined) {
     const message =
       typeof result.error === "object" &&

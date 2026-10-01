@@ -11,6 +11,9 @@ import type { FacilityListQuery } from "@/lib/api/types";
 
 const perPage = 20;
 
+/** The API's limit on space-separated words in `q`. */
+const maxKeywordWords = 5;
+
 const filterKeys = [
   "q",
   "prefecture_code",
@@ -68,6 +71,18 @@ export default function FacilitySearch() {
   const facilities = useFacilities(toApiQuery(searchParams));
 
   function search(form: HTMLFormElement) {
+    // The API rejects more than five words with an English 422, so stop here in Japanese.
+    const keywordInput = form.elements.namedItem("q");
+    if (keywordInput instanceof HTMLInputElement) {
+      const wordCount = keywordInput.value.split(/[\s　]+/).filter(Boolean).length;
+      keywordInput.setCustomValidity(
+        wordCount > maxKeywordWords ? `キーワードは${maxKeywordWords}語までにしてください。` : "",
+      );
+      if (!keywordInput.reportValidity()) {
+        return;
+      }
+    }
+
     const params = new URLSearchParams();
     for (const [key, value] of new FormData(form)) {
       if (typeof value === "string" && value.trim() !== "") {
@@ -117,8 +132,9 @@ export default function FacilitySearch() {
             name="q"
             type="search"
             defaultValue={searchParams.get("q") ?? ""}
-            placeholder="施設名・住所の一部（例: 札幌眼科、髙島）"
+            placeholder="施設名・住所の一部。空白で区切ると複数語（例: 札幌 眼科）"
             maxLength={255}
+            onInput={(event) => event.currentTarget.setCustomValidity("")}
             className="min-w-0 flex-1 rounded-sm border border-border bg-background px-3 py-2 focus:border-accent focus:outline-none"
           />
           <button
