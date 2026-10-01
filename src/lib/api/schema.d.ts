@@ -57,7 +57,7 @@ export interface paths {
         /**
          * 施設一覧・検索
          * @description 医療施設マスタをページネーション付きで返します。`q` は施設名・住所の全角半角/異体字ゆれを
-         *     吸収したあいまい検索です。
+         *     吸収したあいまい検索です。`latitude`・`longitude` を指定すると、`radius` 以内の施設を近い順に返します。
          */
         get: operations["v1.medical-facilities.index"];
         put?: never;
@@ -226,8 +226,27 @@ export interface components {
                 code: number | string;
                 label: string;
             };
+            /** @description 住所から判定した市区町村。判定できない場合はnull */
+            municipality: {
+                code: string | null;
+                label: string;
+            } | null;
             postal_code: string | null;
             address: string;
+            /**
+             * @description 住所から求めた座標（世界測地系）。`level` はその精度（住居・街区・地番・町丁目など）。
+             *     求められなかった施設はnull
+             */
+            location: {
+                latitude: number;
+                longitude: number;
+                level: {
+                    code: number | string;
+                    label: string;
+                };
+            } | null;
+            /** @description 検索地点からの距離（メートル）。`latitude`・`longitude` を指定した検索のときだけ含まれる */
+            distance?: number;
             phone_number: string | null;
             designated_on: string | null;
             designation_history: unknown[] | null;
@@ -329,6 +348,13 @@ export interface operations {
                                 };
                                 /** @constant */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -391,6 +417,8 @@ export interface operations {
             query?: {
                 /** @description 都道府県コード（JIS X 0401の2桁、01〜47） */
                 prefecture_code?: components["schemas"]["Prefecture"];
+                /** @description 市区町村コード（全国地方公共団体コード5桁。例: 13101 千代田区）。住所から判定した値で、判定できない施設は含まれない */
+                municipality_code?: string;
                 /** @description 施設種別 */
                 institution_type?: components["schemas"]["InstitutionType"];
                 /** @description 指定状態 */
@@ -425,6 +453,15 @@ export interface operations {
                  *     廃止・再開も含む。差分の同期には `sort=updated_at` と組み合わせる
                  */
                 updated_since?: string;
+                /**
+                 * @description 検索地点の緯度（世界測地系）。`longitude` と組み合わせ、`radius` 以内の施設を近い順に返す
+                 *     （`sort` を指定した場合はその順）。各施設に `distance` が付く
+                 */
+                latitude?: number;
+                /** @description 検索地点の経度（世界測地系） */
+                longitude?: number;
+                /** @description 検索半径（メートル、デフォルト1000、最大20000）。`latitude`・`longitude` と組み合わせる */
+                radius?: number;
                 /** @description 1ページあたりの件数（デフォルト25、最大100） */
                 per_page?: number;
             };
@@ -477,6 +514,13 @@ export interface operations {
                                 };
                                 /** @constant */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -522,6 +566,13 @@ export interface operations {
                                 };
                                 /** @constant */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -567,6 +618,13 @@ export interface operations {
                                 };
                                 /** @constant */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -645,6 +703,13 @@ export interface operations {
                                 };
                                 /** @constant */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -680,6 +745,7 @@ export interface operations {
                             bureaus: unknown[];
                             department_categories: unknown[];
                             event_types: unknown[];
+                            geocode_levels: unknown[];
                             designation_reasons: [
                                 "新規",
                                 "組織変更",

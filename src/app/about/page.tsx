@@ -13,8 +13,13 @@ const frontendRepositoryUrl = "https://github.com/TomonoriYoshida/medical-facili
 const endpoints = [
   {
     path: "/v1/medical-facilities",
-    description: "施設の検索・一覧（キーワード、都道府県、種別、診療科、指定状態、指定年月日などで絞り込み）",
+    description: "施設の検索・一覧（キーワード、都道府県、市区町村、種別、診療科、指定状態、指定年月日などで絞り込み）",
     example: "/v1/medical-facilities?prefecture_code=13&institution_type=1&per_page=5",
+  },
+  {
+    path: "/v1/medical-facilities?latitude=…&longitude=…",
+    description: "近隣検索（指定した地点から半径 radius メートル以内の施設を近い順に、距離付きで返す）",
+    example: "/v1/medical-facilities?latitude=35.681236&longitude=139.767125&radius=500&per_page=5",
   },
   {
     path: "/v1/medical-facilities/{id}",

@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import AttributionNotice from "@/components/attribution-notice";
 import DepartmentTags from "@/components/department-tags";
 import EventItem from "@/components/event-item";
+import FacilityMap from "@/components/map/facility-map";
 import { SectionHeading } from "@/components/headings";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import StatusBadge from "@/components/status-badge";
@@ -19,6 +20,9 @@ function parseId(value: string | null): number | null {
 }
 
 const linkClass = "text-accent underline underline-offset-2 hover:opacity-80";
+
+/** GeocodeLevel::Town: the town's representative point, not the facility's. */
+const townLevel = 5;
 
 export default function FacilityDetail() {
   const id = parseId(useSearchParams().get("id"));
@@ -107,6 +111,39 @@ export default function FacilityDetail() {
           </table>
         </div>
         <p className="mt-1 text-xs text-muted">※ 診療科は、公開データの診療科名を大分類にまとめたものです。</p>
+      </section>
+
+      <section className="mt-10">
+        <SectionHeading>地図</SectionHeading>
+        {data.location ? (
+          <>
+            <FacilityMap
+              center={data.location}
+              // 町丁目 is only the town's representative point, so show more around it.
+              zoom={data.location.level.code === townLevel ? 15 : 17}
+              markers={[{ id: data.id, ...data.location, title: data.name, detail: fullAddress }]}
+              highlightedId={data.id}
+              className="mt-3 h-72 sm:h-96"
+            />
+            <p className="mt-1 text-xs leading-5 text-muted">
+              ※ 位置の精度：{data.location.level.label}
+              {data.location.level.code === townLevel && "（町や大字の中心付近で、施設の位置ではありません）"}
+              。住所からデジタル庁のアドレス・ベース・レジストリで求めた位置で、建物の位置とずれることがあります。
+            </p>
+            <p className="mt-2 text-sm">
+              <Link
+                href={`/nearby?lat=${data.location.latitude}&lng=${data.location.longitude}`}
+                className={linkClass}
+              >
+                この周辺の施設を地図で探す →
+              </Link>
+            </p>
+          </>
+        ) : (
+          <div className="mt-3">
+            <EmptyState>この施設は、住所から位置を求められませんでした。</EmptyState>
+          </div>
+        )}
       </section>
 
       {data.designation_history && data.designation_history.length > 0 && (
