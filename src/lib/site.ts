@@ -7,6 +7,9 @@ export const siteUrl = (process.env.SITE_URL || "http://localhost:3000").replace
 
 export const siteName = "医療施設マスタ検索";
 
+/** The author's X (Twitter) account, credited on link-preview cards. */
+export const xHandle = "@T_Y_works";
+
 export const siteDescription =
   "全国8つの地方厚生局が公開する保険医療機関・保険薬局の指定一覧をもとに、全国約22万の病院・診療所・歯科診療所・薬局を検索できます。";
 
