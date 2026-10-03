@@ -1,11 +1,11 @@
 # 医療施設マスタ検索（medical-facility-frontend）
 
 [医療施設マスタAPI](https://github.com/TomonoriYoshida/medical-facility-master-api-laravel) のデモ用フロントエンドです。
+全国約22万の病院・診療所・歯科診療所・薬局を検索し、施設の詳細や掲載・変更・廃止の履歴を閲覧できます。
+地図の中心や現在地から近くの施設を探すこともできます（APIの近隣検索）。
 
 - **公開サイト**: https://tomonoriyoshida.github.io/medical-facility-frontend/
 - **接続先のAPI**: https://168-110-42-30.sslip.io （[仕様書](https://168-110-42-30.sslip.io/docs/api)）
-全国約22万の病院・診療所・歯科診療所・薬局を検索し、施設の詳細や掲載・変更・廃止の履歴を閲覧できます。
-地図の中心や現在地から近くの施設を探すこともできます（APIの近隣検索）。
 
 - Next.js 16（App Router、`output: "export"` による静的書き出し）/ React 19 / TypeScript / Tailwind CSS 4
 - データ取得はブラウザからAPIを直接呼び出し（TanStack Query）
