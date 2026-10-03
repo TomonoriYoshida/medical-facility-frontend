@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import SiteHeader from "@/components/site-header";
 import { apiUnavailableMessage, isApiConfigured } from "@/lib/api/client";
-import { ogImage, siteDescription, siteName } from "@/lib/site";
+import { ogImage, siteDescription, siteName, xHandle } from "@/lib/site";
 import Providers from "./providers";
 import "./globals.css";
 
@@ -37,6 +37,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: xHandle,
+    creator: xHandle,
     images: [ogImage],
   },
 };
