@@ -61,8 +61,7 @@ export default function CsvExport({ query, total, filename }: Props) {
       for (let page = 1; facilities.length < count; page++) {
         const result = await unwrap(
           apiClient.GET("/v1/medical-facilities", {
-            // `page` is read by Laravel's paginator but isn't in the spec.
-            params: { query: { ...query, per_page: pageSize, page } as FacilityListQuery },
+            params: { query: { ...query, per_page: pageSize, page } },
           }),
         );
         facilities.push(...result.data);

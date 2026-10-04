@@ -6,6 +6,7 @@ import type {
   EventPage,
   ExportsResponse,
   FacilityListQuery,
+  FacilityPage,
   MedicalFacilityEvent,
   StatsQuery,
 } from "./types";
@@ -19,16 +20,21 @@ export function useOptions() {
   });
 }
 
-export function useFacilities(query: FacilityListQuery & { page?: number }) {
+/**
+ * The facility list comes back in page-number form unless pagination=cursor
+ * is asked for, which this site never does; checked rather than assumed.
+ */
+export function numberedPage(page: FacilityPage | { meta: object }): FacilityPage {
+  if (!("last_page" in page.meta)) {
+    throw new Error("Expected a page-numbered facility list.");
+  }
+  return page as FacilityPage;
+}
+
+export function useFacilities(query: FacilityListQuery) {
   return useQuery({
     queryKey: ["facilities", query],
-    queryFn: () =>
-      unwrap(
-        apiClient.GET("/v1/medical-facilities", {
-          // `page` is read by Laravel's paginator but isn't in the spec.
-          params: { query: query as FacilityListQuery },
-        }),
-      ),
+    queryFn: async () => numberedPage(await unwrap(apiClient.GET("/v1/medical-facilities", { params: { query } }))),
     placeholderData: keepPreviousData,
   });
 }
