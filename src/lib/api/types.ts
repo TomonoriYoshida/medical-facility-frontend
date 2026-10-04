@@ -46,7 +46,11 @@ export type MedicalFacilityEventWithFacility = WithChanges<
   Schemas["MedicalFacilityEventWithFacilityResource"]
 >;
 
-export type FacilityPage = JsonOf<"v1.medical-facilities.index">;
+/**
+ * The list with page numbers. The API also answers in cursor form
+ * (pagination=cursor, for syncing whole copies), which this site never asks for.
+ */
+export type FacilityPage = Extract<JsonOf<"v1.medical-facilities.index">, { meta: { last_page: number } }>;
 
 export type EventPage = Omit<JsonOf<"v1.medical-facility-events.index">, "data"> & {
   data: MedicalFacilityEventWithFacility[];

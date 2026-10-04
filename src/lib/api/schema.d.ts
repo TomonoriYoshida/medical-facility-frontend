@@ -591,6 +591,16 @@ export interface operations {
                 radius?: number;
                 /** @description 1ページあたりの件数（デフォルト25、最大100） */
                 per_page?: number;
+                /** @description ページ番号。最初の1万件まで（上限は `meta.max_page`）。それより先は、条件を絞り込んでください */
+                page?: number;
+                /**
+                 * @description `cursor` にすると、ページ番号の代わりにカーソルでページを送る（件数の上限なし）。
+                 *     次のページは `links.next`（または `meta.next_cursor` を `cursor` に渡す）で取得する。
+                 *     全件の取得や差分の同期向け。並び順は id 順か `sort=updated_at` のときだけ使える
+                 */
+                pagination?: "cursor";
+                /** @description カーソル方式の次のページの位置（`meta.next_cursor` の値） */
+                cursor?: string;
             };
             header?: never;
             path?: never;
@@ -598,7 +608,11 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Paginated set of `MedicalFacilityResource` */
+            /**
+             * @description Paginated set of `MedicalFacilityResource`
+             *
+             *     Paginated set of `MedicalFacilityResource`
+             */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -630,6 +644,63 @@ export interface operations {
                             to: number | null;
                             /** @description Total number of items being paginated. */
                             total: number;
+                            max_page: number;
+                            attribution: {
+                                /** @constant */
+                                notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                license: {
+                                    /** @constant */
+                                    name: "公共データ利用規約（第1.0版）";
+                                    /** @constant */
+                                    url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
+                                };
+                                /** @constant */
+                                disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
+                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                medical_info_net_source: {
+                                    /** @constant */
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                sources: {
+                                    bureau: string;
+                                    url: string;
+                                }[];
+                            };
+                        };
+                    } | {
+                        data: components["schemas"]["MedicalFacilityResource"][];
+                        links: {
+                            first: string | null;
+                            last: string | null;
+                            prev: string | null;
+                            next: string | null;
+                        };
+                        meta: {
+                            /** @description Base path for paginator generated URLs. */
+                            path: string | null;
+                            /** @description Number of items shown per page. */
+                            per_page: number;
+                            /** @description The "cursor" that points to the next set of items. */
+                            next_cursor: string | null;
+                            /** @description The "cursor" that points to the previous set of items. */
+                            prev_cursor: string | null;
                             attribution: {
                                 /** @constant */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
@@ -828,6 +899,8 @@ export interface operations {
                 institution_type?: components["schemas"]["InstitutionType"];
                 /** @description 1ページあたりの件数（デフォルト25、最大100） */
                 per_page?: number;
+                /** @description ページ番号。最初の1万件まで（上限は `meta.max_page`）。それより先は、条件を絞り込んでください */
+                page?: number;
             };
             header?: never;
             path?: never;
@@ -867,6 +940,7 @@ export interface operations {
                             to: number | null;
                             /** @description Total number of items being paginated. */
                             total: number;
+                            max_page: number;
                             attribution: {
                                 /** @constant */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
