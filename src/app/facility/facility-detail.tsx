@@ -7,11 +7,12 @@ import AttributionNotice from "@/components/attribution-notice";
 import DepartmentTags from "@/components/department-tags";
 import EventItem from "@/components/event-item";
 import FacilityMap from "@/components/map/facility-map";
+import OpeningHoursTimetable from "@/components/opening-hours";
 import { SectionHeading } from "@/components/headings";
 import { EmptyState, ErrorState, LoadingState } from "@/components/query-state";
 import StatusBadge from "@/components/status-badge";
 import { apiOrigin } from "@/lib/api/client";
-import { useFacility, useFacilityEvents } from "@/lib/api/queries";
+import { useFacility, useFacilityEvents, useFacilityOpeningHours } from "@/lib/api/queries";
 import { formatBedCounts, formatDate } from "@/lib/format";
 
 function parseId(value: string | null): number | null {
@@ -27,11 +28,14 @@ const townLevel = 5;
 const medicalInfoNetLevel = 6;
 /** InstitutionType::Hospital */
 const hospitalType = 1;
+/** InstitutionType::Pharmacy */
+const pharmacyType = 4;
 
 export default function FacilityDetail() {
   const id = parseId(useSearchParams().get("id"));
   const facility = useFacility(id);
   const events = useFacilityEvents(id);
+  const openingHours = useFacilityOpeningHours(id);
 
   if (id === null) {
     return (
@@ -115,6 +119,30 @@ export default function FacilityDetail() {
           </table>
         </div>
         <p className="mt-1 text-xs text-muted">※ 診療科は、公開データの診療科名を大分類にまとめたものです。</p>
+      </section>
+
+      <section className="mt-10">
+        <SectionHeading>{data.institution_type.code === pharmacyType ? "営業時間" : "診療時間"}</SectionHeading>
+        {openingHours.isPending ? (
+          <LoadingState />
+        ) : openingHours.isError ? (
+          <div className="mt-3">
+            <ErrorState error={openingHours.error} />
+          </div>
+        ) : openingHours.data === null ? (
+          <div className="mt-3">
+            <EmptyState>
+              厚生労働省「医療情報ネット」に、この施設の
+              {data.institution_type.code === pharmacyType ? "営業時間" : "診療時間"}
+              が見つかりませんでした。
+            </EmptyState>
+          </div>
+        ) : (
+          <OpeningHoursTimetable
+            openingHours={openingHours.data}
+            isPharmacy={data.institution_type.code === pharmacyType}
+          />
+        )}
       </section>
 
       <section className="mt-10">
@@ -219,7 +247,7 @@ export default function FacilityDetail() {
       <section className="mt-10">
         <SectionHeading>APIレスポンス</SectionHeading>
         <p className="mt-2 text-sm">
-          この施設のデータは、次のAPIで取得できます（JSON）。
+          この施設のデータと診療時間は、次のAPIで取得できます（JSON）。
           <br />
           <a
             href={`${apiOrigin}/api/v1/medical-facilities/${data.id}`}
@@ -228,6 +256,15 @@ export default function FacilityDetail() {
             className={`font-mono break-all ${linkClass}`}
           >
             GET /api/v1/medical-facilities/{data.id} ↗
+          </a>
+          <br />
+          <a
+            href={`${apiOrigin}/api/v1/medical-facilities/${data.id}/opening-hours`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`font-mono break-all ${linkClass}`}
+          >
+            GET /api/v1/medical-facilities/{data.id}/opening-hours ↗
           </a>
         </p>
       </section>

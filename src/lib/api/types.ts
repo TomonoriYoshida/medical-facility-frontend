@@ -62,6 +62,20 @@ export type PaginationMeta = Omit<FacilityPage["meta"], "attribution">;
 
 export type Options = JsonOf<"v1.options">["data"];
 
+export type OpeningHoursResponse = JsonOf<"v1.medical-facilities.opening-hours">;
+
+/** A facility's hours from the MHLW 医療情報ネット (null when no single match was found). */
+export type OpeningHours = NonNullable<OpeningHoursResponse["data"]>;
+
+export type OpeningHoursSchedule = OpeningHours["schedules"][number];
+
+export type OpeningHoursSlot = OpeningHoursSchedule["slots"][number];
+
+/** mon〜sun, and holiday for public holidays. */
+export type ScheduleDay = OpeningHoursSlot["days"][number]["day"];
+
+export type Closures = NonNullable<OpeningHours["closures"]>;
+
 export type ExportFile = {
   name: string;
   format: "csv" | "jsonl";

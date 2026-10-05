@@ -52,6 +52,23 @@ export function useFacility(id: number | null) {
   });
 }
 
+export function useFacilityOpeningHours(id: number | null) {
+  return useQuery({
+    queryKey: ["facility-opening-hours", id],
+    enabled: id !== null,
+    queryFn: async () =>
+      (
+        await unwrap(
+          apiClient.GET("/v1/medical-facilities/{medicalFacility}/opening-hours", {
+            params: { path: { medicalFacility: id! } },
+          }),
+        )
+      ).data,
+    // From a source updated twice a year; the API marks it cacheable for an hour.
+    staleTime: 60 * 60 * 1000,
+  });
+}
+
 export function useFacilityStats(query: StatsQuery, { enabled = true }: { enabled?: boolean } = {}) {
   return useQuery({
     queryKey: ["facility-stats", query],
