@@ -167,7 +167,7 @@ function ScheduleTable({
                   受付
                 </th>
                 {days.map(({ day }) => (
-                  <td key={day} className={`whitespace-nowrap text-xs ${todayClass(day)}`}>
+                  <td key={day} className={`whitespace-nowrap ${todayClass(day)}`}>
                     {reception[day].length > 0 ? (
                       reception[day].map((value) => <TimeRange key={value} value={value} />)
                     ) : (
