@@ -113,9 +113,9 @@ function ScheduleTable({
     <div>
       {caption && <h3 className="text-sm font-bold">{caption}</h3>}
 
-      {/* Wide screens: slots × days. */}
-      <div className={`hidden overflow-x-auto sm:block ${caption ? "mt-2" : ""}`}>
-        <table className="data-table table-fixed text-center">
+      {/* Wide screens: slots × days, each time range on one line (eight of them only fit from lg). */}
+      <div className={`hidden overflow-x-auto lg:block ${caption ? "mt-2" : ""}`}>
+        <table className="data-table table-fixed text-center [&_td]:px-1.5 [&_th]:px-1.5">
           <thead>
             <tr>
               <th className="w-20">
@@ -181,8 +181,8 @@ function ScheduleTable({
         </table>
       </div>
 
-      {/* Phones: one line per day. */}
-      <dl className={`divide-y divide-border border border-border text-sm sm:hidden ${caption ? "mt-2" : ""}`}>
+      {/* Phones and tablets: one line per day. */}
+      <dl className={`divide-y divide-border border border-border text-sm lg:hidden ${caption ? "mt-2" : ""}`}>
         {days.map(({ day, label }) => (
           <div key={day} className={`flex gap-3 px-3 py-2 ${day === today ? "bg-band" : ""}`}>
             <dt className="w-10 shrink-0 font-bold">
@@ -207,15 +207,7 @@ function ScheduleTable({
 }
 
 function TimeRange({ value }: { value: string }) {
-  const [from, to] = value.split("–");
-  return (
-    <span className="block leading-5">
-      {from}
-      <br />
-      <span className="text-muted">–</span>
-      {to}
-    </span>
-  );
+  return <span className="block whitespace-nowrap">{value}</span>;
 }
 
 function ClosureSummary({ closures, label }: { closures: Closures; label: string }) {
