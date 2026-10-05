@@ -146,7 +146,7 @@ function ScheduleTable({
                       <td
                         key={day}
                         rowSpan={schedule.slots.length}
-                        className={`align-middle! text-muted ${todayClass(day)}`}
+                        className={`align-middle! text-center text-muted ${todayClass(day)}`}
                       >
                         休
                       </td>
@@ -154,7 +154,7 @@ function ScheduleTable({
                   }
                   const value = hours[day][slotIndex];
                   return (
-                    <td key={day} className={`whitespace-nowrap ${todayClass(day)}`}>
+                    <td key={day} className={`whitespace-nowrap ${value ? "" : "text-center"} ${todayClass(day)}`}>
                       {value ? <TimeRange value={value} /> : <span className="text-muted">—</span>}
                     </td>
                   );
@@ -167,7 +167,10 @@ function ScheduleTable({
                   受付
                 </th>
                 {days.map(({ day }) => (
-                  <td key={day} className={`whitespace-nowrap ${todayClass(day)}`}>
+                  <td
+                    key={day}
+                    className={`whitespace-nowrap ${reception[day].length > 0 ? "" : "text-center"} ${todayClass(day)}`}
+                  >
                     {reception[day].length > 0 ? (
                       reception[day].map((value) => <TimeRange key={value} value={value} />)
                     ) : (
