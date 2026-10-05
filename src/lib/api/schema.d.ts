@@ -159,6 +159,32 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/medical-facilities/{medicalFacility}/opening-hours": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 施設の診療時間
+         * @description 厚生労働省「医療情報ネット」のオープンデータ（年2回、6月・12月に更新）にある、1つの施設の診療時間と休診日を返します。
+         *     地方厚生局のデータとは共通のコードがないため、同じ市区町村・施設種別で名称（または所在地）が一致する施設が1つだけ見つかったときに返し、
+         *     見つからないときは `data` が `null` になります。`published_on` の時点の情報で、臨時の休診や最近の変更は含みません。
+         *
+         *     `schedules` は同じ診療時間の診療科をまとめたもので、`slots` は時間帯（午前・午後など）ごとの曜日別の時刻です（`day` の `holiday` は祝日）。
+         *     時刻は公開データのまま `HH:MM` で返し、終了が開始より早いもの（夜間など）もそのままです。薬局は `departments` が空で、受付時間はありません。
+         *     `closures` は定休日で、`weekly` が毎週の休み、`monthly` が「第2水曜」のような決まった週の休み、`holidays` が祝日に休むか、`other` がその他（自由記述）です。
+         */
+        get: operations["v1.medical-facilities.opening-hours"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/stats/facilities": {
         parameters: {
             query?: never;
@@ -465,10 +491,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -663,10 +689,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -719,10 +745,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -785,10 +811,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -851,10 +877,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -959,10 +985,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -1049,10 +1075,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
@@ -1074,6 +1100,101 @@ export interface operations {
                 };
             };
             422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.medical-facilities.opening-hours": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description The medical facility ID */
+                medicalFacility: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            /**
+                             * Format: date
+                             * @description 医療情報ネットの公開時点
+                             */
+                            published_on: string;
+                            schedules: {
+                                departments: string[];
+                                slots: {
+                                    number: number;
+                                    days: {
+                                        /** @enum {string} */
+                                        day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun" | "holiday";
+                                        opens: string | null;
+                                        closes: string | null;
+                                        reception_opens: string | null;
+                                        reception_closes: string | null;
+                                    }[];
+                                }[];
+                            }[];
+                            closures: {
+                                weekly: ("mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun")[];
+                                monthly: {
+                                    week: number;
+                                    /** @enum {string} */
+                                    day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+                                }[];
+                                holidays: boolean | null;
+                                other: string | null;
+                            } | null;
+                        } | null;
+                        meta: {
+                            attribution: {
+                                /** @constant */
+                                notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                license: {
+                                    /** @constant */
+                                    name: "公共データ利用規約（第1.0版）";
+                                    /** @constant */
+                                    url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
+                                };
+                                /** @constant */
+                                disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
+                                medical_info_net_source: {
+                                    /** @constant */
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                sources: {
+                                    bureau: string;
+                                    url: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+            };
+            404: components["responses"]["ModelNotFoundException"];
         };
     };
     "v1.stats.facilities": {
@@ -1151,10 +1272,10 @@ export interface operations {
                                     /** @constant */
                                     url: "https://catalog.registries.digital.go.jp/rc/dataset/";
                                 };
-                                /** @description 町丁目までしか求められない施設の座標の出典（厚生労働省、PDL1.0）。 */
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
                                 medical_info_net_source: {
                                     /** @constant */
-                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標）を加工して作成";
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };

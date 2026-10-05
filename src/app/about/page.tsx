@@ -32,6 +32,11 @@ const endpoints = [
     example: "/v1/medical-facilities/1/events",
   },
   {
+    path: "/v1/medical-facilities/{id}/opening-hours",
+    description: "1つの施設の診療時間・休診日（厚生労働省「医療情報ネット」から。年2回更新）",
+    example: "/v1/medical-facilities/1/opening-hours",
+  },
+  {
     path: "/v1/medical-facility-events",
     description: "全国の新規・廃止・変更の一覧（新しい順）",
     example: "/v1/medical-facility-events?per_page=5",
