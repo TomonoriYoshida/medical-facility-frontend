@@ -36,7 +36,9 @@ const sortOptions = [
 ];
 
 function toApiQuery(searchParams: URLSearchParams): FacilityListQuery & { page?: number } {
-  const query: Record<string, string | number> = { per_page: perPage };
+  // Counting stops past the 10,000 rows page numbers reach; the summary
+  // then reads "10,000 件以上" (total=capped).
+  const query: Record<string, string | number> = { per_page: perPage, total: "capped" };
   for (const key of filterKeys) {
     const value = searchParams.get(key);
     if (value) {

@@ -133,6 +133,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -160,6 +178,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -263,7 +282,7 @@
         "/v1/medical-facilities": {
             "get": {
                 "operationId": "v1.medical-facilities.index",
-                "description": "\u533b\u7642\u65bd\u8a2d\u30de\u30b9\u30bf\u3092\u30da\u30fc\u30b8\u30cd\u30fc\u30b7\u30e7\u30f3\u4ed8\u304d\u3067\u8fd4\u3057\u307e\u3059\u3002`q` \u306f\u65bd\u8a2d\u540d\u30fb\u4f4f\u6240\u306e\u5168\u89d2\u534a\u89d2/\u7570\u4f53\u5b57\u3086\u308c\u3092\n\u5438\u53ce\u3057\u305f\u3042\u3044\u307e\u3044\u691c\u7d22\u3067\u3059\u3002`latitude`\u30fb`longitude` \u3092\u6307\u5b9a\u3059\u308b\u3068\u3001`radius` \u4ee5\u5185\u306e\u65bd\u8a2d\u3092\u8fd1\u3044\u9806\u306b\u8fd4\u3057\u307e\u3059\u3002",
+                "description": "\u533b\u7642\u65bd\u8a2d\u30de\u30b9\u30bf\u3092\u30da\u30fc\u30b8\u30cd\u30fc\u30b7\u30e7\u30f3\u4ed8\u304d\u3067\u8fd4\u3057\u307e\u3059\u3002`q` \u306f\u65bd\u8a2d\u540d\u30fb\u4f4f\u6240\u306e\u5168\u89d2\u534a\u89d2/\u7570\u4f53\u5b57\u3086\u308c\u3092\n\u5438\u53ce\u3057\u305f\u3042\u3044\u307e\u3044\u691c\u7d22\u3067\u3059\u3002`latitude`\u30fb`longitude` \u3092\u6307\u5b9a\u3059\u308b\u3068\u3001`radius` \u4ee5\u5185\u306e\u65bd\u8a2d\u3092\u8fd1\u3044\u9806\u306b\u8fd4\u3057\u307e\u3059\u3002\n`open_at` \u3092\u6307\u5b9a\u3059\u308b\u3068\u3001\u305d\u306e\u65e5\u6642\u306b\u53d7\u4ed8\u4e2d\u306e\u65bd\u8a2d\uff08\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u8a3a\u7642\u6642\u9593\u3067\u5224\u5b9a\uff09\u3060\u3051\u3092\u8fd4\u3057\u307e\u3059\u3002",
                 "summary": "\u65bd\u8a2d\u4e00\u89a7\u30fb\u691c\u7d22",
                 "tags": [
                     "MedicalFacility"
@@ -388,6 +407,15 @@
                         }
                     },
                     {
+                        "name": "open_at",
+                        "in": "query",
+                        "description": "\u3053\u306e\u65e5\u6642\u306b\u53d7\u4ed8\u4e2d\u306e\u65bd\u8a2d\u3060\u3051\u3092\u8fd4\u3059\uff08ISO 8601\u3002\u6642\u5dee\u306e\u6307\u5b9a\u304c\u306a\u3051\u308c\u3070\u65e5\u672c\u6642\u9593\u3002\u4f8b: `2026-10-05T10:30`\uff09\u3002\n\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u8a3a\u7642\u6642\u9593\u3067\u5224\u5b9a\u3057\uff08\u53d7\u4ed8\u6642\u9593\u304c\u3042\u308c\u3070\u53d7\u4ed8\u6642\u9593\u3001\u306a\u3051\u308c\u3070\u8a3a\u7642\u6642\u9593\u3002\u3069\u308c\u304b\u306e\u8a3a\u7642\u79d1\u304c\u958b\u3044\u3066\u3044\u308c\u3070\u5bfe\u8c61\uff09\u3001\n\u795d\u65e5\u306f\u300c\u795d\u300d\u306e\u6642\u523b\u3001\u300c\u7b2c2\u6c34\u66dc\u4f11\u8a3a\u300d\u306e\u3088\u3046\u306a\u4f11\u307f\u3082\u53cd\u6620\u3059\u308b\u3002\u7167\u5408\u3067\u304d\u306a\u3044\u65bd\u8a2d\u3084\u3001\u5e74\u672b\u5e74\u59cb\u306a\u3069\u306e\u81e8\u6642\u306e\u4f11\u307f\u306f\u5224\u5b9a\u3067\u304d\u306a\u3044",
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
                         "name": "latitude",
                         "in": "query",
                         "description": "\u691c\u7d22\u5730\u70b9\u306e\u7def\u5ea6\uff08\u4e16\u754c\u6e2c\u5730\u7cfb\uff09\u3002`longitude` \u3068\u7d44\u307f\u5408\u308f\u305b\u3001`radius` \u4ee5\u5185\u306e\u65bd\u8a2d\u3092\u8fd1\u3044\u9806\u306b\u8fd4\u3059\n\uff08`sort` \u3092\u6307\u5b9a\u3057\u305f\u5834\u5408\u306f\u305d\u306e\u9806\uff09\u3002\u5404\u65bd\u8a2d\u306b `distance` \u304c\u4ed8\u304f",
@@ -455,6 +483,17 @@
                         "schema": {
                             "type": "string",
                             "maxLength": 1000
+                        }
+                    },
+                    {
+                        "name": "total",
+                        "in": "query",
+                        "description": "`capped` \u306b\u3059\u308b\u3068\u3001\u4ef6\u6570\uff08`meta.total`\uff09\u3092\u6700\u521d\u306e1\u4e07\u4ef6\u3092\u8d85\u3048\u305f\u6642\u70b9\u3067\u6570\u3048\u7d42\u3048\u3066\u901f\u304f\u8fd4\u3059\u3002\n\u8d85\u3048\u305f\u3068\u304d\u306f `meta.total_is_capped` \u304c true \u3067\u3001`meta.total` \u306f 10,001\uff08\u5b9f\u969b\u306e\u4ef6\u6570\u306f\u305d\u308c\u4ee5\u4e0a\uff09\u3002\n\u30da\u30fc\u30b8\u756a\u53f7\u3067\u79fb\u52d5\u3067\u304d\u308b\u7bc4\u56f2\uff08`meta.max_page`\uff09\u306f\u5909\u308f\u3089\u306a\u3044\u3002\u4ef6\u6570\u3092\u300c1\u4e07\u4ef6\u4ee5\u4e0a\u300d\u3068\u8868\u793a\u3067\u304d\u308b\u753b\u9762\u5411\u3051",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "capped"
+                            ]
                         }
                     }
                 ],
@@ -581,6 +620,9 @@
                                                         "max_page": {
                                                             "type": "integer"
                                                         },
+                                                        "total_is_capped": {
+                                                            "type": "boolean"
+                                                        },
                                                         "attribution": {
                                                             "type": "object",
                                                             "properties": {
@@ -663,6 +705,24 @@
                                                                         "url"
                                                                     ]
                                                                 },
+                                                                "holiday_source": {
+                                                                    "type": "object",
+                                                                    "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                                    "properties": {
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                        },
+                                                                        "url": {
+                                                                            "type": "string",
+                                                                            "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "name",
+                                                                        "url"
+                                                                    ]
+                                                                },
                                                                 "sources": {
                                                                     "type": "array",
                                                                     "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -690,6 +750,7 @@
                                                                 "address_source",
                                                                 "medical_info_net_source",
                                                                 "population_source",
+                                                                "holiday_source",
                                                                 "sources"
                                                             ]
                                                         }
@@ -704,6 +765,7 @@
                                                         "to",
                                                         "total",
                                                         "max_page",
+                                                        "total_is_capped",
                                                         "attribution"
                                                     ]
                                                 }
@@ -869,6 +931,24 @@
                                                                         "url"
                                                                     ]
                                                                 },
+                                                                "holiday_source": {
+                                                                    "type": "object",
+                                                                    "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                                    "properties": {
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                        },
+                                                                        "url": {
+                                                                            "type": "string",
+                                                                            "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                        }
+                                                                    },
+                                                                    "required": [
+                                                                        "name",
+                                                                        "url"
+                                                                    ]
+                                                                },
                                                                 "sources": {
                                                                     "type": "array",
                                                                     "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -896,6 +976,7 @@
                                                                 "address_source",
                                                                 "medical_info_net_source",
                                                                 "population_source",
+                                                                "holiday_source",
                                                                 "sources"
                                                             ]
                                                         }
@@ -1041,6 +1122,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1068,6 +1167,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1209,6 +1309,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1236,6 +1354,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1543,6 +1662,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1570,6 +1707,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1819,6 +1957,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -1846,6 +2002,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -1874,7 +2031,7 @@
         "/v1/medical-facilities/{medicalFacility}/opening-hours": {
             "get": {
                 "operationId": "v1.medical-facilities.opening-hours",
-                "description": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u5e742\u56de\u30016\u6708\u30fb12\u6708\u306b\u66f4\u65b0\uff09\u306b\u3042\u308b\u30011\u3064\u306e\u65bd\u8a2d\u306e\u8a3a\u7642\u6642\u9593\u3068\u4f11\u8a3a\u65e5\u3092\u8fd4\u3057\u307e\u3059\u3002\n\u5730\u65b9\u539a\u751f\u5c40\u306e\u30c7\u30fc\u30bf\u3068\u306f\u5171\u901a\u306e\u30b3\u30fc\u30c9\u304c\u306a\u3044\u305f\u3081\u3001\u540c\u3058\u5e02\u533a\u753a\u6751\u30fb\u65bd\u8a2d\u7a2e\u5225\u3067\u540d\u79f0\uff08\u307e\u305f\u306f\u6240\u5728\u5730\uff09\u304c\u4e00\u81f4\u3059\u308b\u65bd\u8a2d\u304c1\u3064\u3060\u3051\u898b\u3064\u304b\u3063\u305f\u3068\u304d\u306b\u8fd4\u3057\u3001\n\u898b\u3064\u304b\u3089\u306a\u3044\u3068\u304d\u306f `data` \u304c `null` \u306b\u306a\u308a\u307e\u3059\u3002`published_on` \u306e\u6642\u70b9\u306e\u60c5\u5831\u3067\u3001\u81e8\u6642\u306e\u4f11\u8a3a\u3084\u6700\u8fd1\u306e\u5909\u66f4\u306f\u542b\u307f\u307e\u305b\u3093\u3002\n\n`schedules` \u306f\u540c\u3058\u8a3a\u7642\u6642\u9593\u306e\u8a3a\u7642\u79d1\u3092\u307e\u3068\u3081\u305f\u3082\u306e\u3067\u3001`slots` \u306f\u6642\u9593\u5e2f\uff08\u5348\u524d\u30fb\u5348\u5f8c\u306a\u3069\uff09\u3054\u3068\u306e\u66dc\u65e5\u5225\u306e\u6642\u523b\u3067\u3059\uff08`day` \u306e `holiday` \u306f\u795d\u65e5\uff09\u3002\n\u6642\u523b\u306f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u307e\u307e `HH:MM` \u3067\u8fd4\u3057\u3001\u7d42\u4e86\u304c\u958b\u59cb\u3088\u308a\u65e9\u3044\u3082\u306e\uff08\u591c\u9593\u306a\u3069\uff09\u3082\u305d\u306e\u307e\u307e\u3067\u3059\u3002\u85ac\u5c40\u306f `departments` \u304c\u7a7a\u3067\u3001\u53d7\u4ed8\u6642\u9593\u306f\u3042\u308a\u307e\u305b\u3093\u3002\n`closures` \u306f\u5b9a\u4f11\u65e5\u3067\u3001`weekly` \u304c\u6bce\u9031\u306e\u4f11\u307f\u3001`monthly` \u304c\u300c\u7b2c2\u6c34\u66dc\u300d\u306e\u3088\u3046\u306a\u6c7a\u307e\u3063\u305f\u9031\u306e\u4f11\u307f\u3001`holidays` \u304c\u795d\u65e5\u306b\u4f11\u3080\u304b\u3001`other` \u304c\u305d\u306e\u4ed6\uff08\u81ea\u7531\u8a18\u8ff0\uff09\u3067\u3059\u3002",
+                "description": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u5e742\u56de\u30016\u6708\u30fb12\u6708\u306b\u66f4\u65b0\uff09\u306b\u3042\u308b\u30011\u3064\u306e\u65bd\u8a2d\u306e\u8a3a\u7642\u6642\u9593\u3068\u4f11\u8a3a\u65e5\u3092\u8fd4\u3057\u307e\u3059\u3002\n\u5730\u65b9\u539a\u751f\u5c40\u306e\u30c7\u30fc\u30bf\u3068\u306f\u5171\u901a\u306e\u30b3\u30fc\u30c9\u304c\u306a\u3044\u305f\u3081\u3001\u540c\u3058\u5e02\u533a\u753a\u6751\u30fb\u65bd\u8a2d\u7a2e\u5225\u3067\u540d\u79f0\uff08\u307e\u305f\u306f\u6240\u5728\u5730\uff09\u304c\u4e00\u81f4\u3059\u308b\u65bd\u8a2d\u304c1\u3064\u3060\u3051\u898b\u3064\u304b\u3063\u305f\u3068\u304d\u306b\u8fd4\u3057\u3001\n\u898b\u3064\u304b\u3089\u306a\u3044\u3068\u304d\u306f `data` \u304c `null` \u306b\u306a\u308a\u307e\u3059\uff08\u7167\u5408\u306f\u6bce\u671d\u884c\u3046\u305f\u3081\u3001\u65b0\u3057\u304f\u8f09\u3063\u305f\u65bd\u8a2d\u306f\u7fcc\u671d\u304b\u3089\u8fd4\u308a\u307e\u3059\uff09\u3002`published_on` \u306e\u6642\u70b9\u306e\u60c5\u5831\u3067\u3001\u81e8\u6642\u306e\u4f11\u8a3a\u3084\u6700\u8fd1\u306e\u5909\u66f4\u306f\u542b\u307f\u307e\u305b\u3093\u3002\n\n`schedules` \u306f\u540c\u3058\u8a3a\u7642\u6642\u9593\u306e\u8a3a\u7642\u79d1\u3092\u307e\u3068\u3081\u305f\u3082\u306e\u3067\u3001`slots` \u306f\u6642\u9593\u5e2f\uff08\u5348\u524d\u30fb\u5348\u5f8c\u306a\u3069\uff09\u3054\u3068\u306e\u66dc\u65e5\u5225\u306e\u6642\u523b\u3067\u3059\uff08`day` \u306e `holiday` \u306f\u795d\u65e5\uff09\u3002\n\u6642\u523b\u306f\u516c\u958b\u30c7\u30fc\u30bf\u306e\u307e\u307e `HH:MM` \u3067\u8fd4\u3057\u3001\u7d42\u4e86\u304c\u958b\u59cb\u3088\u308a\u65e9\u3044\u3082\u306e\uff08\u591c\u9593\u306a\u3069\uff09\u3082\u305d\u306e\u307e\u307e\u3067\u3059\u3002\u85ac\u5c40\u306f `departments` \u304c\u7a7a\u3067\u3001\u53d7\u4ed8\u6642\u9593\u306f\u3042\u308a\u307e\u305b\u3093\u3002\n`closures` \u306f\u5b9a\u4f11\u65e5\u3067\u3001`weekly` \u304c\u6bce\u9031\u306e\u4f11\u307f\u3001`monthly` \u304c\u300c\u7b2c2\u6c34\u66dc\u300d\u306e\u3088\u3046\u306a\u6c7a\u307e\u3063\u305f\u9031\u306e\u4f11\u307f\u3001`holidays` \u304c\u795d\u65e5\u306b\u4f11\u3080\u304b\u3001`other` \u304c\u305d\u306e\u4ed6\uff08\u81ea\u7531\u8a18\u8ff0\uff09\u3067\u3059\u3002",
                 "summary": "\u65bd\u8a2d\u306e\u8a3a\u7642\u6642\u9593",
                 "tags": [
                     "MedicalFacilityOpeningHours"
@@ -2154,6 +2311,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -2181,6 +2356,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -2442,6 +2618,24 @@
                                                                 "url"
                                                             ]
                                                         },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
                                                         "sources": {
                                                             "type": "array",
                                                             "description": "The bureaus this installation actually draws from (RhbScope).",
@@ -2469,6 +2663,7 @@
                                                         "address_source",
                                                         "medical_info_net_source",
                                                         "population_source",
+                                                        "holiday_source",
                                                         "sources"
                                                     ]
                                                 }
@@ -2682,6 +2877,214 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/v1/holidays": {
+            "get": {
+                "operationId": "v1.holidays",
+                "description": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u300d\u306e\u4e00\u89a7\u304b\u3089\u3001\u671f\u9593\u5185\u306e\u795d\u65e5\u30fb\u4f11\u65e5\uff08\u632f\u66ff\u4f11\u65e5\u30fb\u56fd\u6c11\u306e\u4f11\u65e5\u3092\u542b\u3080\uff09\u3092\u65e5\u4ed8\u9806\u306b\u8fd4\u3057\u307e\u3059\u3002\n\u4e00\u89a7\u306b\u306f\u7fcc\u5e74\u672b\u307e\u3067\u304c\u8f09\u308a\u3001\u7fcc\u5e74\u5206\u306f\u4f8b\u5e742\u6708\u3054\u308d\u306b\u8ffd\u52a0\u3055\u308c\u307e\u3059\u3002\u5e74\u672b\u5e74\u59cb\u3084\u304a\u76c6\u306f\u542b\u307f\u307e\u305b\u3093\u3002\n\u4e00\u89a7API\u306e `open_at` \u306f\u3001\u795d\u65e5\u306b\u306f\u8a3a\u7642\u6642\u9593\u306e\u300c\u795d\u300d\u306e\u6642\u523b\u3067\u5224\u5b9a\u3057\u307e\u3059\u3002",
+                "summary": "\u795d\u65e5\u306e\u4e00\u89a7",
+                "tags": [
+                    "PublicHoliday"
+                ],
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "\u3053\u306e\u65e5\u4ee5\u964d\u306e\u795d\u65e5\uff08YYYY-MM-DD\uff09\u3002\u7701\u7565\u6642\u306f\u4eca\u5e74\u306e1\u67081\u65e5",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "\u3053\u306e\u65e5\u4ee5\u524d\u306e\u795d\u65e5\uff08YYYY-MM-DD\uff09\u3002\u7701\u7565\u6642\u306f\u6765\u5e74\u306e12\u670831\u65e5",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "date": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "date",
+                                                    "name"
+                                                ]
+                                            }
+                                        },
+                                        "meta": {
+                                            "type": "object",
+                                            "properties": {
+                                                "attribution": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "notice": {
+                                                            "type": "string",
+                                                            "const": "\u672cAPI\u306e\u30c7\u30fc\u30bf\u306f\u3001\u5404\u5730\u65b9\u539a\u751f\u5c40\u304c\u516c\u958b\u3059\u308b\u300c\u4fdd\u967a\u533b\u7642\u6a5f\u95a2\u30fb\u4fdd\u967a\u85ac\u5c40\u306e\u6307\u5b9a\u4e00\u89a7\u300d\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210\u3057\u3066\u3044\u307e\u3059\u3002"
+                                                        },
+                                                        "license": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u516c\u5171\u30c7\u30fc\u30bf\u5229\u7528\u898f\u7d04\uff08\u7b2c1.0\u7248\uff09"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
+                                                        "disclaimer": {
+                                                            "type": "string",
+                                                            "const": "\u30c7\u30fc\u30bf\u306e\u6b63\u78ba\u6027\u30fb\u5b8c\u5168\u6027\u306f\u4fdd\u8a3c\u3057\u307e\u305b\u3093\u3002\u6700\u65b0\u304b\u3064\u6b63\u78ba\u306a\u60c5\u5831\u306f\u3001\u5404\u5730\u65b9\u539a\u751f\u5c40\u306e\u516c\u8868\u8cc7\u6599\u3092\u78ba\u8a8d\u3057\u3066\u304f\u3060\u3055\u3044\u3002"
+                                                        },
+                                                        "address_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u30fb\u5ea7\u6a19\u306e\u51fa\u5178\uff08\u30c7\u30b8\u30bf\u30eb\u5e81 \u30a2\u30c9\u30ec\u30b9\u30fb\u30d9\u30fc\u30b9\u30fb\u30ec\u30b8\u30b9\u30c8\u30ea\u3001CC BY 4.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u30a2\u30c9\u30ec\u30b9\u30fb\u30d9\u30fc\u30b9\u30fb\u30ec\u30b8\u30b9\u30c8\u30ea\uff08\u30c7\u30b8\u30bf\u30eb\u5e81\uff09\u306e\u5e02\u533a\u753a\u6751\u30fb\u753a\u5b57\u30fb\u4f4f\u5c45\u8868\u793a\u30fb\u5730\u756a\u306e\u5404\u30de\u30b9\u30bf\u30fc\u3068\u4f4d\u7f6e\u53c2\u7167\u30c7\u30fc\u30bf\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://catalog.registries.digital.go.jp/rc/dataset/"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
+                                                        "medical_info_net_source": {
+                                                            "type": "object",
+                                                            "description": "\u753a\u4e01\u76ee\u307e\u3067\u3057\u304b\u6c42\u3081\u3089\u308c\u306a\u3044\u65bd\u8a2d\u306e\u5ea7\u6a19\u3068\u3001\u65bd\u8a2d\u306e\u8a3a\u7642\u6642\u9593\u306e\u51fa\u5178\uff08\u539a\u751f\u52b4\u50cd\u7701\u3001PDL1.0\uff09\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u539a\u751f\u52b4\u50cd\u7701\u300c\u533b\u7642\u60c5\u5831\u30cd\u30c3\u30c8\u300d\u306e\u30aa\u30fc\u30d7\u30f3\u30c7\u30fc\u30bf\uff08\u6240\u5728\u5730\u5ea7\u6a19\u30fb\u8a3a\u7642\u6642\u9593\u30fb\u4f11\u8a3a\u65e5\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
+                                                        "population_source": {
+                                                            "type": "object",
+                                                            "description": "\u5e02\u533a\u753a\u6751\u306e\u4eba\u53e3\u306e\u51fa\u5178\uff08\u7dcf\u52d9\u7701\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u96c6\u8a08API\u306e\u4eba\u53e3\u3042\u305f\u308a\u306e\u4ef6\u6570\u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u7dcf\u52d9\u7701\u300c\u4f4f\u6c11\u57fa\u672c\u53f0\u5e33\u306b\u57fa\u3065\u304f\u4eba\u53e3\u3001\u4eba\u53e3\u52d5\u614b\u53ca\u3073\u4e16\u5e2f\u6570\u300d\uff08\u5e02\u533a\u753a\u6751\u5225\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
+                                                        "holiday_source": {
+                                                            "type": "object",
+                                                            "description": "\u795d\u65e5\u306e\u51fa\u5178\uff08\u5185\u95a3\u5e9c\u3001\u653f\u5e9c\u6a19\u6e96\u5229\u7528\u898f\u7d04\u30fbCC BY 4.0 \u4e92\u63db\uff09\u3002\u795d\u65e5API\u3068\u3001\u4e00\u89a7API\u306e open_at \u306b\u4f7f\u3046\u3002",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "const": "\u5185\u95a3\u5e9c\u300c\u56fd\u6c11\u306e\u795d\u65e5\u306b\u3064\u3044\u3066\u300d\u306e\u795d\u65e5\u4e00\u89a7\uff08CSV\uff09\u3092\u52a0\u5de5\u3057\u3066\u4f5c\u6210"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "const": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "url"
+                                                            ]
+                                                        },
+                                                        "sources": {
+                                                            "type": "array",
+                                                            "description": "The bureaus this installation actually draws from (RhbScope).",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "bureau": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "url": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "bureau",
+                                                                    "url"
+                                                                ]
+                                                            }
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "notice",
+                                                        "license",
+                                                        "disclaimer",
+                                                        "address_source",
+                                                        "medical_info_net_source",
+                                                        "population_source",
+                                                        "holiday_source",
+                                                        "sources"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "attribution"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "data",
+                                        "meta"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
                     }
                 }
             }

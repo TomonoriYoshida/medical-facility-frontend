@@ -58,7 +58,10 @@ export type EventPage = Omit<JsonOf<"v1.medical-facility-events.index">, "data">
 
 export type Attribution = FacilityPage["meta"]["attribution"];
 
-export type PaginationMeta = Omit<FacilityPage["meta"], "attribution">;
+/** The event list has no total=capped, so its meta lacks total_is_capped. */
+export type PaginationMeta = Omit<FacilityPage["meta"], "attribution" | "total_is_capped"> & {
+  total_is_capped?: boolean;
+};
 
 export type Options = JsonOf<"v1.options">["data"];
 

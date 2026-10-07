@@ -58,6 +58,7 @@ export interface paths {
          * 施設一覧・検索
          * @description 医療施設マスタをページネーション付きで返します。`q` は施設名・住所の全角半角/異体字ゆれを
          *     吸収したあいまい検索です。`latitude`・`longitude` を指定すると、`radius` 以内の施設を近い順に返します。
+         *     `open_at` を指定すると、その日時に受付中の施設（厚生労働省「医療情報ネット」の診療時間で判定）だけを返します。
          */
         get: operations["v1.medical-facilities.index"];
         put?: never;
@@ -170,7 +171,7 @@ export interface paths {
          * 施設の診療時間
          * @description 厚生労働省「医療情報ネット」のオープンデータ（年2回、6月・12月に更新）にある、1つの施設の診療時間と休診日を返します。
          *     地方厚生局のデータとは共通のコードがないため、同じ市区町村・施設種別で名称（または所在地）が一致する施設が1つだけ見つかったときに返し、
-         *     見つからないときは `data` が `null` になります。`published_on` の時点の情報で、臨時の休診や最近の変更は含みません。
+         *     見つからないときは `data` が `null` になります（照合は毎朝行うため、新しく載った施設は翌朝から返ります）。`published_on` の時点の情報で、臨時の休診や最近の変更は含みません。
          *
          *     `schedules` は同じ診療時間の診療科をまとめたもので、`slots` は時間帯（午前・午後など）ごとの曜日別の時刻です（`day` の `holiday` は祝日）。
          *     時刻は公開データのまま `HH:MM` で返し、終了が開始より早いもの（夜間など）もそのままです。薬局は `departments` が空で、受付時間はありません。
@@ -229,6 +230,28 @@ export interface paths {
          *     `designation_reasons` は元データでは自由記述のため、代表的な値のみです。
          */
         get: operations["v1.options"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/holidays": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * 祝日の一覧
+         * @description 内閣府「国民の祝日」の一覧から、期間内の祝日・休日（振替休日・国民の休日を含む）を日付順に返します。
+         *     一覧には翌年末までが載り、翌年分は例年2月ごろに追加されます。年末年始やお盆は含みません。
+         *     一覧APIの `open_at` は、祝日には診療時間の「祝」の時刻で判定します。
+         */
+        get: operations["v1.holidays"];
         put?: never;
         post?: never;
         delete?: never;
@@ -505,6 +528,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
                                 };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -607,6 +637,12 @@ export interface operations {
                  */
                 updated_since?: string;
                 /**
+                 * @description この日時に受付中の施設だけを返す（ISO 8601。時差の指定がなければ日本時間。例: `2026-10-05T10:30`）。
+                 *     厚生労働省「医療情報ネット」の診療時間で判定し（受付時間があれば受付時間、なければ診療時間。どれかの診療科が開いていれば対象）、
+                 *     祝日は「祝」の時刻、「第2水曜休診」のような休みも反映する。照合できない施設や、年末年始などの臨時の休みは判定できない
+                 */
+                open_at?: string;
+                /**
                  * @description 検索地点の緯度（世界測地系）。`longitude` と組み合わせ、`radius` 以内の施設を近い順に返す
                  *     （`sort` を指定した場合はその順）。各施設に `distance` が付く
                  */
@@ -627,6 +663,12 @@ export interface operations {
                 pagination?: "cursor";
                 /** @description カーソル方式の次のページの位置（`meta.next_cursor` の値） */
                 cursor?: string;
+                /**
+                 * @description `capped` にすると、件数（`meta.total`）を最初の1万件を超えた時点で数え終えて速く返す。
+                 *     超えたときは `meta.total_is_capped` が true で、`meta.total` は 10,001（実際の件数はそれ以上）。
+                 *     ページ番号で移動できる範囲（`meta.max_page`）は変わらない。件数を「1万件以上」と表示できる画面向け
+                 */
+                total?: "capped";
             };
             header?: never;
             path?: never;
@@ -671,6 +713,7 @@ export interface operations {
                             /** @description Total number of items being paginated. */
                             total: number;
                             max_page: number;
+                            total_is_capped: boolean;
                             attribution: {
                                 /** @constant */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
@@ -702,6 +745,13 @@ export interface operations {
                                     name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
@@ -758,6 +808,13 @@ export interface operations {
                                     name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
@@ -825,6 +882,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
                                 };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -890,6 +954,13 @@ export interface operations {
                                     name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
@@ -999,6 +1070,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
                                 };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -1088,6 +1166,13 @@ export interface operations {
                                     name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
@@ -1183,6 +1268,13 @@ export interface operations {
                                     name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
@@ -1286,6 +1378,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
                                 };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
+                                };
                                 /** @description The bureaus this installation actually draws from (RhbScope). */
                                 sources: {
                                     bureau: string;
@@ -1353,6 +1452,83 @@ export interface operations {
                     };
                 };
             };
+        };
+    };
+    "v1.holidays": {
+        parameters: {
+            query?: {
+                /** @description この日以降の祝日（YYYY-MM-DD）。省略時は今年の1月1日 */
+                from?: string;
+                /** @description この日以前の祝日（YYYY-MM-DD）。省略時は来年の12月31日 */
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: {
+                            date: string;
+                            name: string;
+                        }[];
+                        meta: {
+                            attribution: {
+                                /** @constant */
+                                notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                license: {
+                                    /** @constant */
+                                    name: "公共データ利用規約（第1.0版）";
+                                    /** @constant */
+                                    url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
+                                };
+                                /** @constant */
+                                disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
+                                /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
+                                address_source: {
+                                    /** @constant */
+                                    name: "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成";
+                                    /** @constant */
+                                    url: "https://catalog.registries.digital.go.jp/rc/dataset/";
+                                };
+                                /** @description 町丁目までしか求められない施設の座標と、施設の診療時間の出典（厚生労働省、PDL1.0）。 */
+                                medical_info_net_source: {
+                                    /** @constant */
+                                    name: "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
+                                };
+                                /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
+                                population_source: {
+                                    /** @constant */
+                                    name: "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html";
+                                };
+                                /** @description 祝日の出典（内閣府、政府標準利用規約・CC BY 4.0 互換）。祝日APIと、一覧APIの open_at に使う。 */
+                                holiday_source: {
+                                    /** @constant */
+                                    name: "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成";
+                                    /** @constant */
+                                    url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
+                                };
+                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                sources: {
+                                    bureau: string;
+                                    url: string;
+                                }[];
+                            };
+                        };
+                    };
+                };
+            };
+            422: components["responses"]["ValidationException"];
         };
     };
 }
