@@ -16,9 +16,13 @@ export function ResultSummary({ meta }: { meta: PaginationMeta }) {
   if (meta.total === 0) {
     return null;
   }
+  // With total=capped the API stops counting one row past the page limit,
+  // so a capped total is one more than the 10,000 it stands for.
+  const total = meta.total_is_capped ? meta.total - 1 : meta.total;
   return (
     <p className="text-sm text-muted">
-      全 <span className="font-bold text-accent">{numberFormatter.format(meta.total)}</span> 件中{" "}
+      全 <span className="font-bold text-accent">{numberFormatter.format(total)}</span> 件
+      {meta.total_is_capped && "以上"}中{" "}
       {numberFormatter.format(meta.from ?? 0)}〜{numberFormatter.format(meta.to ?? 0)} 件を表示
     </p>
   );
@@ -53,8 +57,17 @@ export default function Pagination({ meta, hrefForPage }: Props) {
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-sm text-muted">
         <span>
-          {numberFormatter.format(current)} / {numberFormatter.format(meta.last_page)} ページ
-          {isCapped && `（表示できるのは${numberFormatter.format(maxPage)}ページまで）`}
+          {meta.total_is_capped ? (
+            // The capped count tells only that the pages run past the limit.
+            <>
+              {numberFormatter.format(current)} / {numberFormatter.format(maxPage)} ページ以上
+            </>
+          ) : (
+            <>
+              {numberFormatter.format(current)} / {numberFormatter.format(meta.last_page)} ページ
+              {isCapped && `（表示できるのは${numberFormatter.format(maxPage)}ページまで）`}
+            </>
+          )}
         </span>
         {/* Typing a number beats clicking through hundreds of pages. */}
         {lastReachablePage > 7 && (
