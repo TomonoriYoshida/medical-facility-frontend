@@ -13,6 +13,10 @@
   /* Navy for filled areas under white text, identical in both color schemes. */
   --navy: #1f3a5f;
   --danger: #b42318;
+  /* Brown for notices that something is temporarily unavailable (maintenance). */
+  --warning: #8a4e05;
+  --warning-surface: #fff6e6;
+  --warning-border: #e9c98f;
 }
 
 @theme inline {
@@ -25,6 +29,9 @@
   --color-accent: var(--accent);
   --color-navy: var(--navy);
   --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-warning-surface: var(--warning-surface);
+  --color-warning-border: var(--warning-border);
   --font-sans: var(--font-noto-sans-jp), "Hiragino Sans", "Yu Gothic UI", sans-serif;
   --font-mono: var(--font-geist-mono);
 }
@@ -39,6 +46,9 @@
     --band: #1a2636;
     --accent: #9fbbe0;
     --danger: #f28b82;
+    --warning: #f0b45a;
+    --warning-surface: #2a2113;
+    --warning-border: #5c4520;
   }
 }
 
