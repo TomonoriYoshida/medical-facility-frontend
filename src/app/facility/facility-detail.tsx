@@ -26,6 +26,8 @@ const linkClass = "text-accent underline underline-offset-2 hover:opacity-80";
 const townLevel = 5;
 /** GeocodeLevel::MedicalInfoNet: a source (MHLW 医療情報ネット's coordinates), not a precision. */
 const medicalInfoNetLevel = 6;
+/** GeocodeLevel::NationalLand: a source (MLIT 国土数値情報's positions), not a precision. */
+const nationalLandLevel = 7;
 /** InstitutionType::Hospital */
 const hospitalType = 1;
 /** InstitutionType::Pharmacy */
@@ -161,6 +163,10 @@ export default function FacilityDetail() {
               {data.location.level.code === medicalInfoNetLevel ? (
                 <>
                   ※ 位置：厚生労働省「医療情報ネット」が公開する座標です（住所からは町丁目までしか求められなかったため）。建物の位置とずれることがあります。
+                </>
+              ) : data.location.level.code === nationalLandLevel ? (
+                <>
+                  ※ 位置：国土交通省「国土数値情報（医療機関）」（2020年度）の位置です（住所からは町丁目までしか求められなかったため）。建物の位置とずれることがあります。
                 </>
               ) : (
                 <>

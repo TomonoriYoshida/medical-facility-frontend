@@ -31,6 +31,11 @@ export default function AttributionNotice({ attribution }: { attribution: Attrib
           （{attribution.license.name}）
         </li>
         <li>
+          位置（住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科）：
+          <ExternalLink url={attribution.national_land_source.url}>{attribution.national_land_source.name}</ExternalLink>
+          （CC BY 4.0）
+        </li>
+        <li>
           市区町村の人口（ダッシュボードの人口あたりの数）：
           <ExternalLink url={attribution.population_source.url}>{attribution.population_source.name}</ExternalLink>
           （政府標準利用規約、CC BY 4.0 互換）
