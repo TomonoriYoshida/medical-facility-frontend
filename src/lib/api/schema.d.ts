@@ -13,10 +13,7 @@ export interface paths {
         };
         /**
          * 一括ダウンロードのファイル一覧
-         * @description 取り扱う範囲の全施設（廃止を含む）を、都道府県ごとと全体（`all`）の CSV / JSON Lines（gzip 圧縮）で提供します。
-         *     毎日の取込の後に、データが変わっていれば作り直します。JSON Lines の各行は施設詳細と同じ形です。
-         *     CSV はコードと名前を別の列にし、診療科目は `|` 区切り、`designation_history` と `bed_counts` は JSON 文字列です。
-         *     `sha256` でダウンロードしたファイルを検証できます。以降の差分は、一覧APIの `updated_since` で取得してください。
+         * @description 取り扱う範囲の全施設（廃止を含む）を、都道府県ごとと全体（`all`）の CSV / JSON Lines（gzip 圧縮）で提供します。毎日の取込の後に、データが変わっていれば作り直します。JSON Lines の各行は施設詳細と同じ形です。CSV はコードと名前を別の列にし、診療科目は `|` 区切り、`designation_history` と `bed_counts` は JSON 文字列です。`sha256` でダウンロードしたファイルを検証できます。以降の差分は、一覧APIの `updated_since` で取得してください。
          */
         get: operations["v1.exports.index"];
         put?: never;
@@ -56,9 +53,7 @@ export interface paths {
         };
         /**
          * 施設一覧・検索
-         * @description 医療施設マスタをページネーション付きで返します。`q` は施設名・住所の全角半角/異体字ゆれを
-         *     吸収したあいまい検索です。`latitude`・`longitude` を指定すると、`radius` 以内の施設を近い順に返します。
-         *     `open_at` を指定すると、その日時に受付中の施設（厚生労働省「医療情報ネット」の診療時間で判定）だけを返します。
+         * @description 医療施設マスタをページネーション付きで返します。`q` は施設名・住所の全角半角/異体字ゆれを吸収したあいまい検索です。`latitude`・`longitude` を指定すると、`radius` 以内の施設を近い順に返します。`open_at` を指定すると、その日時に受付中の施設（厚生労働省「医療情報ネット」の診療時間で判定）だけを返し、各施設に受付が終わる日時 `open_until` を含めます。
          */
         get: operations["v1.medical-facilities.index"];
         put?: never;
@@ -98,8 +93,7 @@ export interface paths {
         };
         /**
          * 施設の履歴
-         * @description 1つの施設の新規・廃止・変更を新しい順に返します。取込を始めた時点で掲載されていた施設は、
-         *     最も古い記録が `origin` = 初回取込 の「新規」になります（開業日ではありません）。
+         * @description 1つの施設の新規・廃止・変更を新しい順に返します。取込を始めた時点で掲載されていた施設は、最も古い記録が `origin` = 初回取込 の「新規」になります（開業日ではありません）。
          */
         get: operations["v1.medical-facilities.events.index"];
         put?: never;
@@ -119,10 +113,7 @@ export interface paths {
         };
         /**
          * 変化の一覧
-         * @description 毎月の公開データを比較して見つかった、施設の新規・廃止・変更を新しい順に返します。
-         *     `occurred_on` は変化が載った公開データの日付で、実際の開業日・廃止日ではありません。
-         *     取込を始めた時点のデータ（初回取込）と、取り込み直しによる差分（再処理）は含みません。
-         *     前回の確認以降に見つかった変化は、`detected_since` で取得してください。
+         * @description 毎月の公開データを比較して見つかった、施設の新規・廃止・変更を新しい順に返します。`occurred_on` は変化が載った公開データの日付で、実際の開業日・廃止日ではありません。`facility` は施設の現在の情報で、変化の時点の情報ではありません。取込を始めた時点のデータ（初回取込）と、取り込み直しによる差分（再処理）は含みません。前回の確認以降に見つかった変化は、`detected_since` で取得してください。
          */
         get: operations["v1.medical-facility-events.index"];
         put?: never;
@@ -142,9 +133,7 @@ export interface paths {
         };
         /**
          * 新規・廃止の集計
-         * @description 毎月の公開データを比較して見つかった施設の新規・廃止（変化の一覧と同じ「検知」の記録）を、
-         *     `group_by` ごとに数えます。初回取込と取り込み直し（再処理）の記録は含みません。
-         *     記録は運用を始めてから蓄積されるため、最初の1〜2か月は0件になります。
+         * @description 毎月の公開データを比較して見つかった施設の新規・廃止（変化の一覧と同じ「検知」の記録）を、`group_by` ごとに数えます。初回取込と取り込み直し（再処理）の記録は含みません。記録は運用を始めてから蓄積されるため、最初の1〜2か月は0件になります。
          *
          *     - `month`: 期間内のすべての月を古い順に返します（変化がない月は0）。月は変化が載った公開データの月で、実際の開業・廃止の月ではありません。
          *     - `municipality`: 件数の多い順です。住所から市区町村を判定できない施設は `key`・`label` が null の1件にまとめます。
@@ -169,13 +158,9 @@ export interface paths {
         };
         /**
          * 施設の診療時間
-         * @description 厚生労働省「医療情報ネット」のオープンデータ（年2回、6月・12月に更新）にある、1つの施設の診療時間と休診日を返します。
-         *     地方厚生局のデータとは共通のコードがないため、同じ市区町村・施設種別で名称（または所在地）が一致する施設が1つだけ見つかったときに返し、
-         *     見つからないときは `data` が `null` になります（照合は毎朝行うため、新しく載った施設は翌朝から返ります）。`published_on` の時点の情報で、臨時の休診や最近の変更は含みません。
+         * @description 厚生労働省「医療情報ネット」のオープンデータ（年2回、6月・12月に更新）にある、1つの施設の診療時間と休診日を返します。地方厚生局のデータとは共通のコードがないため、同じ市区町村・施設種別で名称（または所在地）が一致する施設が1つだけ見つかったときに返し、見つからないときは `data` が `null` になります（照合は毎朝行うため、新しく載った施設は翌朝から返ります）。`published_on` の時点の情報で、臨時の休診や最近の変更は含みません。
          *
-         *     `schedules` は同じ診療時間の診療科をまとめたもので、`slots` は時間帯（午前・午後など）ごとの曜日別の時刻です（`day` の `holiday` は祝日）。
-         *     時刻は公開データのまま `HH:MM` で返し、終了が開始より早いもの（夜間など）もそのままです。薬局は `departments` が空で、受付時間はありません。
-         *     `closures` は定休日で、`weekly` が毎週の休み、`monthly` が「第2水曜」のような決まった週の休み、`holidays` が祝日に休むか、`other` がその他（自由記述）です。
+         *     `schedules` は同じ診療時間の診療科をまとめたもので、`slots` は時間帯（午前・午後など）ごとの曜日別の時刻です（`day` の `holiday` は祝日）。時刻は公開データのまま `HH:MM` で返し、終了が開始より早いもの（夜間など）もそのままです。薬局は `departments` が空で、受付時間はありません。`closures` は定休日で、`weekly` が毎週の休み、`monthly` が「第2水曜」のような決まった週の休み、`holidays` が祝日に休むか、`other` がその他（自由記述）です。
          */
         get: operations["v1.medical-facilities.opening-hours"];
         put?: never;
@@ -195,17 +180,13 @@ export interface paths {
         };
         /**
          * 施設数の集計
-         * @description 絞り込んだ施設を `group_by` ごとに数えます。絞り込みの条件は一覧APIと同じです。
-         *     「期間内に新規開業した施設」は、`designation_reason=新規` と `designated_from`・`designated_to` で数えます
-         *     （保険医療機関の指定は6年ごとに更新されますが、指定年月日は最初の指定日のままです）。
+         * @description 絞り込んだ施設を `group_by` ごとに数えます。絞り込みの条件は一覧APIと同じです。「期間内に新規開業した施設」は、`designation_reason=新規` と `designated_from`・`designated_to` で数えます（保険医療機関の指定は6年ごとに更新されますが、指定年月日は最初の指定日のままです）。
          *
          *     - `month`: 期間内のすべての月を古い順に返します（施設がない月は0）。
          *     - `municipality`: 施設数の多い順です。住所から市区町村を判定できない施設は `key`・`label` が null の1件にまとめます。
          *     - `department_category`: 施設数の多い順です。1つの施設が複数の診療科目に数えられるため、`count` の合計は `meta.total` と一致しません。
          *
-         *     `municipality` のときは、各市区町村の人口（総務省「住民基本台帳に基づく人口」、`meta.population_as_of` 時点）と
-         *     人口1万人あたりの件数（`count_per_10k`）も返します。住民登録上の人口のため、昼間人口の多い都心部では高く出ます。
-         *     ほかの `group_by` と、人口がわからない市区町村では null です。
+         *     `municipality` のときは、各市区町村の人口（総務省「住民基本台帳に基づく人口」、`meta.population_as_of` 時点）と人口1万人あたりの件数（`count_per_10k`）も返します。住民登録上の人口のため、昼間人口の多い都心部では高く出ます。ほかの `group_by` と、人口がわからない市区町村では null です。
          */
         get: operations["v1.stats.facilities"];
         put?: never;
@@ -225,9 +206,7 @@ export interface paths {
         };
         /**
          * 絞り込みの選択肢
-         * @description 一覧APIの絞り込み条件に使える値と、その日本語名を返します。`code` はそのまま各パラメータに渡せます。
-         *     都道府県・地方厚生局・施設種別は、このAPIが取り扱う範囲のものだけを返します。
-         *     `designation_reasons` は元データでは自由記述のため、代表的な値のみです。
+         * @description 一覧APIの絞り込み条件に使える値と、その日本語名を返します。`code` はそのまま各パラメータに渡せます。都道府県・地方厚生局・施設種別は、このAPIが取り扱う範囲のものだけを返します。`designation_reasons` は元データでは自由記述のため、代表的な値のみです。
          */
         get: operations["v1.options"];
         put?: never;
@@ -247,9 +226,7 @@ export interface paths {
         };
         /**
          * 祝日の一覧
-         * @description 内閣府「国民の祝日」の一覧から、期間内の祝日・休日（振替休日・国民の休日を含む）を日付順に返します。
-         *     一覧には翌年末までが載り、翌年分は例年2月ごろに追加されます。年末年始やお盆は含みません。
-         *     一覧APIの `open_at` は、祝日には診療時間の「祝」の時刻で判定します。
+         * @description 内閣府「国民の祝日」の一覧から、期間内の祝日・休日（振替休日・国民の休日を含む）を日付順に返します。一覧には翌年末までが載り、翌年分は例年2月ごろに追加されます。年末年始やお盆は含みません。一覧APIの `open_at` は、祝日には診療時間の「祝」の時刻で判定します。
          */
         get: operations["v1.holidays"];
         put?: never;
@@ -266,39 +243,129 @@ export interface components {
     schemas: {
         /**
          * DepartmentBaseCategory
-         * @description Coarse "which specialty family" classification for a facility's standing 診療科目 (departments), derived from Japan's officially permitted 標榜診療科名 base categories (医療法施行規則). The source data allows open-ended qualifier+base-category combination naming (e.g. "糖尿病・脂質代謝内科" = a qualifier + 内科), so exact department-name fidelity is not attempted here -- only which of these ~26 base categories a department name matches, via marker/substring matching in DepartmentCategoryClassifier. This provisional case list is derived from real-data research (recovers 96.3% of observed department-token occurrences); it may be adjusted once Phase A-2's Hokkaido spike confirms the final observed vocabulary.
+         * @description 診療科目の大分類。元データの診療科目（例: 糖尿病・脂質代謝内科）を、医療法施行規則の診療科名の基本の分類にまとめたものです。1つの施設に複数の大分類が付きます。
+         *
+         *     | コード | 名前 |
+         *     |---|---|
+         *     | `1` | 内科 |
+         *     | `2` | 外科 |
+         *     | `3` | 小児科 |
+         *     | `4` | 皮膚科 |
+         *     | `5` | 眼科 |
+         *     | `6` | 耳鼻いんこう科 |
+         *     | `7` | 産科 |
+         *     | `8` | 婦人科 |
+         *     | `9` | リハビリテーション科 |
+         *     | `10` | 放射線科 |
+         *     | `11` | 麻酔科 |
+         *     | `12` | 泌尿器科 |
+         *     | `13` | 精神科 |
+         *     | `14` | 神経科 |
+         *     | `15` | 歯科 |
+         *     | `16` | リウマチ科 |
+         *     | `17` | アレルギー科 |
+         *     | `18` | 肛門科 |
+         *     | `19` | 形成外科 |
+         *     | `20` | 病理診断科 |
+         *     | `21` | 臨床検査科 |
+         *     | `22` | 救急科 |
+         *     | `23` | 循環器内科 |
+         *     | `24` | 消化器内科 |
+         *     | `25` | 呼吸器内科 |
+         *     | `26` | 総合診療科 |
          * @enum {integer}
          */
         DepartmentBaseCategory: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26;
         /**
          * FacilityStatsGrouping
-         * @description What GET /api/v1/stats/facilities counts facilities by (`group_by`).
+         * @description 施設数の集計（GET /v1/stats/facilities）の `group_by` に指定できる単位
+         *
+         *     | |
+         *     |---|
+         *     | `month` <br/> 指定年月日の月（期間内のすべての月を返す） |
+         *     | `municipality` <br/> 市区町村 |
+         *     | `department_category` <br/> 診療科目の大分類（複数の大分類を持つ施設は、それぞれに数える） |
          * @enum {string}
          */
         FacilityStatsGrouping: "month" | "municipality" | "department_category";
         /**
          * InstitutionType
+         * @description 施設種別
+         *
+         *     | コード | 名前 |
+         *     |---|---|
+         *     | `1` | 病院 |
+         *     | `2` | 診療所 |
+         *     | `3` | 歯科診療所 |
+         *     | `4` | 薬局 |
          * @enum {integer}
          */
         InstitutionType: 1 | 2 | 3 | 4;
         /** MedicalFacilityEventResource */
         MedicalFacilityEventResource: {
+            /**
+             * @description 変化の記録のID
+             * @example 302536
+             */
             id: number;
+            /**
+             * @description 変化の種類（1: 新規 / 2: 廃止 / 3: 変更）
+             * @example {
+             *       "code": 3,
+             *       "label": "変更"
+             *     }
+             */
             event_type: {
                 code: number;
                 label: string;
             };
+            /**
+             * @description 記録のきっかけ。1: 初回取込（取込を始めた時点で掲載されていた施設）/ 2: 検知（公開データの比較で見つかった実際の変化）/
+             *     3: 再処理（同じ公開データを取り込み直したときの、このAPIの処理の変更による差分）
+             * @example {
+             *       "code": 2,
+             *       "label": "検知"
+             *     }
+             */
             origin: {
                 code: number;
                 label: string;
             };
-            /** @description 変化が載った公開データの日付（実際の開業・廃止・変更の日ではない） */
+            /**
+             * @description 変化が載った公開データの日付（YYYY-MM-DD）。実際の開業・廃止・変更の日ではない
+             * @example 2026-10-01
+             */
             occurred_on: string;
-            /** @description この変化を検知した（公開データを取り込んだ）日時 */
+            /**
+             * @description この変化を検知した（公開データを取り込んだ）日時
+             * @example 2026-10-06T20:41:47.000000Z
+             */
             detected_at: string | null;
-            /** @description 過去に廃止された施設が再び掲載されたか（新規のときのみ） */
+            /**
+             * @description 過去に廃止された施設が再び掲載されたか（新規のときだけ含まれる）
+             * @example false
+             */
             is_reopening?: boolean;
-            /** @description 変更された項目と変更前後の値（変更のときのみ） */
+            /**
+             * @description 変更された項目と変更前後の値（変更のときだけ含まれる）。`attribute` は施設の項目名、`old`・`new` はその項目の施設詳細と同じ形の値
+             * @example [
+             *       {
+             *         "attribute": "designation_history",
+             *         "old": [
+             *           {
+             *             "reason": "組織変更",
+             *             "date": "2020-10-01"
+             *           }
+             *         ],
+             *         "new": [
+             *           {
+             *             "reason": "組織変更",
+             *             "date": "2026-10-01"
+             *           }
+             *         ]
+             *       }
+             *     ]
+             */
             changes?: {
                 attribute: string | "bureau";
                 old: {
@@ -313,27 +380,81 @@ export interface components {
         };
         /**
          * MedicalFacilityEventType
+         * @description 施設の変化の種類。公開データに新たに載った施設は「新規」、載らなくなった施設は「廃止」、載り続けて内容が変わった施設は「変更」です。
+         *
+         *     | コード | 名前 |
+         *     |---|---|
+         *     | `1` | 新規 |
+         *     | `2` | 廃止 |
+         *     | `3` | 変更 |
          * @enum {integer}
          */
         MedicalFacilityEventType: 1 | 2 | 3;
         /** MedicalFacilityEventWithFacilityResource */
         MedicalFacilityEventWithFacilityResource: {
+            /**
+             * @description 変化の記録のID
+             * @example 302536
+             */
             id: number;
+            /**
+             * @description 変化の種類（1: 新規 / 2: 廃止 / 3: 変更）
+             * @example {
+             *       "code": 3,
+             *       "label": "変更"
+             *     }
+             */
             event_type: {
                 code: number;
                 label: string;
             };
+            /**
+             * @description 記録のきっかけ。1: 初回取込（取込を始めた時点で掲載されていた施設）/ 2: 検知（公開データの比較で見つかった実際の変化）/
+             *     3: 再処理（同じ公開データを取り込み直したときの、このAPIの処理の変更による差分）
+             * @example {
+             *       "code": 2,
+             *       "label": "検知"
+             *     }
+             */
             origin: {
                 code: number;
                 label: string;
             };
-            /** @description 変化が載った公開データの日付（実際の開業・廃止・変更の日ではない） */
+            /**
+             * @description 変化が載った公開データの日付（YYYY-MM-DD）。実際の開業・廃止・変更の日ではない
+             * @example 2026-10-01
+             */
             occurred_on: string;
-            /** @description この変化を検知した（公開データを取り込んだ）日時 */
+            /**
+             * @description この変化を検知した（公開データを取り込んだ）日時
+             * @example 2026-10-06T20:41:47.000000Z
+             */
             detected_at: string | null;
-            /** @description 過去に廃止された施設が再び掲載されたか（新規のときのみ） */
+            /**
+             * @description 過去に廃止された施設が再び掲載されたか（新規のときだけ含まれる）
+             * @example false
+             */
             is_reopening?: boolean;
-            /** @description 変更された項目と変更前後の値（変更のときのみ） */
+            /**
+             * @description 変更された項目と変更前後の値（変更のときだけ含まれる）。`attribute` は施設の項目名、`old`・`new` はその項目の施設詳細と同じ形の値
+             * @example [
+             *       {
+             *         "attribute": "designation_history",
+             *         "old": [
+             *           {
+             *             "reason": "組織変更",
+             *             "date": "2020-10-01"
+             *           }
+             *         ],
+             *         "new": [
+             *           {
+             *             "reason": "組織変更",
+             *             "date": "2026-10-01"
+             *           }
+             *         ]
+             *       }
+             *     ]
+             */
             changes?: {
                 attribute: string | "bureau";
                 old: {
@@ -349,41 +470,106 @@ export interface components {
         };
         /** MedicalFacilityResource */
         MedicalFacilityResource: {
+            /**
+             * @description 施設のID。施設詳細・履歴・診療時間のAPIのパスに使う
+             * @example 33961
+             */
             id: number;
+            /**
+             * @description 地方厚生局が付けた7桁の医療機関コード。同じ都道府県・施設種別の中でだけ一意
+             * @example 0114611
+             */
             facility_code: string;
-            /** @description 全国で一意な10桁の医療機関コード（都道府県番号＋点数表番号＋医療機関コード7桁） */
+            /**
+             * @description 全国で一意な10桁の医療機関コード（都道府県番号2桁＋点数表番号1桁＋`facility_code`）。点数表番号は病院・診療所が1、歯科診療所が3、薬局が4。レセプトなどで使われる番号
+             * @example 1310114611
+             */
             medical_institution_code: string | null;
-            /** @description 施設種別 */
+            /**
+             * @description 施設種別。`code` は一覧APIの `institution_type` に渡せる
+             * @example {
+             *       "code": 1,
+             *       "label": "病院"
+             *     }
+             */
             institution_type: {
                 code: number;
                 label: string;
             };
-            /** @description 指定状態 */
+            /**
+             * @description 指定状態。`code` は一覧APIの `status` に渡せる
+             * @example {
+             *       "code": 1,
+             *       "label": "指定中"
+             *     }
+             */
             status: {
                 code: number;
                 label: string;
             };
-            /** @description 発行元の地方厚生局 */
+            /**
+             * @description 指定一覧を公開している地方厚生局。`code` は一覧APIの `bureau_code` に渡せる
+             * @example {
+             *       "code": 3,
+             *       "label": "関東信越厚生局"
+             *     }
+             */
             bureau: {
                 code: number;
                 label: string;
             };
+            /**
+             * @description 施設名（元データの表記のまま。法人名を含むことがある）
+             * @example 東京歯科大学水道橋病院
+             */
             name: string;
+            /**
+             * @description 都道府県コード（JIS X 0401の2桁）。`prefecture.code` と同じ値
+             * @example 13
+             */
             prefecture_code: string;
+            /**
+             * @description 都道府県。`code` は一覧APIの `prefecture_code` に渡せる
+             * @example {
+             *       "code": "13",
+             *       "label": "東京都"
+             *     }
+             */
             prefecture: {
                 code: string;
                 label: string;
             };
-            /** @description 住所から判定した市区町村。判定できない場合はnull */
+            /**
+             * @description 住所から判定した市区町村。`code` は全国地方公共団体コード5桁で、一覧APIの `municipality_code` に渡せる。判定できない場合はnull
+             * @example {
+             *       "code": "13101",
+             *       "label": "千代田区"
+             *     }
+             */
             municipality: {
                 code: string;
                 label: string | null;
             } | null;
+            /**
+             * @description 郵便番号（NNN-NNNN）
+             * @example 101-0061
+             */
             postal_code: string | null;
+            /**
+             * @description 所在地（元データの表記のまま。都道府県名を含むかは地方厚生局によって異なる）
+             * @example 千代田区神田三崎町二丁目９番１８号
+             */
             address: string;
             /**
-             * @description 住所から求めた座標（世界測地系）。`level` はその精度（住居・街区・地番・町丁目など）か、厚生労働省「医療情報ネット」の座標を使ったこと。
-             *     求められなかった施設はnull
+             * @description 住所から求めた座標（世界測地系）。`level` はその精度（住居・街区・地番・町丁目など）か、厚生労働省「医療情報ネット」の座標を使ったこと。求められなかった施設はnull
+             * @example {
+             *       "latitude": 35.701308,
+             *       "longitude": 139.754859,
+             *       "level": {
+             *         "code": 2,
+             *         "label": "街区"
+             *       }
+             *     }
              */
             location: {
                 latitude: number;
@@ -393,75 +579,193 @@ export interface components {
                     label: string;
                 };
             } | null;
-            /** @description 検索地点からの距離（メートル）。`latitude`・`longitude` を指定した検索のときだけ含まれる */
+            /**
+             * @description 検索地点からの距離（メートル）。`latitude`・`longitude` を指定した検索のときだけ含まれる
+             * @example 350
+             */
             distance?: number;
+            /**
+             * @description `open_at` の日時から受付が続く終わりの日時（日本時間）。日付をまたぐ受付は翌日の終わりまで。`open_at` を指定した検索のときだけ含まれる
+             * @example 2026-10-05T19:00:00+09:00
+             */
+            open_until?: string;
+            /**
+             * @description 電話番号（区切りをハイフンに揃えたもの）
+             * @example 03-3262-3421
+             */
             phone_number: string | null;
+            /**
+             * @description 指定年月日（YYYY-MM-DD）。最初に指定された日で、6年ごとの指定の更新では変わらない
+             * @example 1991-11-01
+             */
             designated_on: string | null;
             /**
-             * @description 指定年月日欄の履歴（新しい順）。`reason` は登録理由（新規・交代・組織変更など、記載がなければnull）、
-             *     `date` は現在の指定期間の開始日と見られる日付（読み取れなければnull）
+             * @description 指定年月日欄の履歴（新しい順）。`reason` は登録理由（新規・交代・組織変更など、記載がなければnull）、`date` は現在の指定期間の開始日と見られる日付（読み取れなければnull）
+             * @example [
+             *       {
+             *         "reason": null,
+             *         "date": "2024-11-01"
+             *       }
+             *     ]
              */
             designation_history: {
                 reason: string | null;
                 date: string | null;
             }[] | null;
-            /** @description 病床種別（一般・療養・精神など）ごとの病床数。薬局は常にnull */
+            /**
+             * @description 病床種別（一般・療養・精神など）ごとの病床数。病床のない施設と薬局はnull
+             * @example {
+             *       "一般": 20
+             *     }
+             */
             bed_counts: {
                 [key: string]: number;
             } | null;
-            /** @description 診療科目の大分類 */
+            /**
+             * @description 診療科目の大分類。`code` は一覧APIの `department_category` に渡せる。薬局は空の配列
+             * @example [
+             *       {
+             *         "code": 1,
+             *         "label": "内科"
+             *       },
+             *       {
+             *         "code": 5,
+             *         "label": "眼科"
+             *       },
+             *       {
+             *         "code": 15,
+             *         "label": "歯科"
+             *       }
+             *     ]
+             */
             department_categories: {
                 code: number;
                 label: string;
             }[];
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @description このAPIに施設を初めて取り込んだ日時（開業日ではない）
+             * @example 2026-09-23T20:15:48.000000Z
+             */
             created_at: string | null;
-            /** Format: date-time */
+            /**
+             * Format: date-time
+             * @description 施設の情報（座標を含む）が最後に変わった日時。差分の同期には一覧APIの `updated_since` を使う
+             * @example 2026-10-01T13:56:08.000000Z
+             */
             updated_at: string | null;
         };
         /**
          * MedicalFacilityStatus
+         * @description 保険医療機関・保険薬局としての指定状態。公開データに載らなくなった施設は「廃止」になります。
+         *
+         *     | コード | 名前 |
+         *     |---|---|
+         *     | `1` | 指定中 |
+         *     | `2` | 廃止 |
+         *     | `3` | 休止 |
          * @enum {integer}
          */
         MedicalFacilityStatus: 1 | 2 | 3;
         /**
          * Prefecture
-         * @description The 47 prefectures by JIS X 0401 code, the form prefecture_code is stored and filtered in.
+         * @description 都道府県コード（JIS X 0401の2桁）
+         *
+         *     | コード | 名前 |
+         *     |---|---|
+         *     | `01` | 北海道 |
+         *     | `02` | 青森県 |
+         *     | `03` | 岩手県 |
+         *     | `04` | 宮城県 |
+         *     | `05` | 秋田県 |
+         *     | `06` | 山形県 |
+         *     | `07` | 福島県 |
+         *     | `08` | 茨城県 |
+         *     | `09` | 栃木県 |
+         *     | `10` | 群馬県 |
+         *     | `11` | 埼玉県 |
+         *     | `12` | 千葉県 |
+         *     | `13` | 東京都 |
+         *     | `14` | 神奈川県 |
+         *     | `15` | 新潟県 |
+         *     | `16` | 富山県 |
+         *     | `17` | 石川県 |
+         *     | `18` | 福井県 |
+         *     | `19` | 山梨県 |
+         *     | `20` | 長野県 |
+         *     | `21` | 岐阜県 |
+         *     | `22` | 静岡県 |
+         *     | `23` | 愛知県 |
+         *     | `24` | 三重県 |
+         *     | `25` | 滋賀県 |
+         *     | `26` | 京都府 |
+         *     | `27` | 大阪府 |
+         *     | `28` | 兵庫県 |
+         *     | `29` | 奈良県 |
+         *     | `30` | 和歌山県 |
+         *     | `31` | 鳥取県 |
+         *     | `32` | 島根県 |
+         *     | `33` | 岡山県 |
+         *     | `34` | 広島県 |
+         *     | `35` | 山口県 |
+         *     | `36` | 徳島県 |
+         *     | `37` | 香川県 |
+         *     | `38` | 愛媛県 |
+         *     | `39` | 高知県 |
+         *     | `40` | 福岡県 |
+         *     | `41` | 佐賀県 |
+         *     | `42` | 長崎県 |
+         *     | `43` | 熊本県 |
+         *     | `44` | 大分県 |
+         *     | `45` | 宮崎県 |
+         *     | `46` | 鹿児島県 |
+         *     | `47` | 沖縄県 |
          * @enum {string}
          */
         Prefecture: "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" | "33" | "34" | "35" | "36" | "37" | "38" | "39" | "40" | "41" | "42" | "43" | "44" | "45" | "46" | "47";
         /**
          * RhbBureau
-         * @description The 8 regional health bureaus (地方厚生局) that each independently publish their own jurisdiction's insured medical institution list.
+         * @description 施設の指定一覧を公開している地方厚生局。各局が管轄する都道府県の一覧を公開しています（中国四国厚生局は中国5県、四国厚生局は四国4県）。
+         *
+         *     | コード | 名前 |
+         *     |---|---|
+         *     | `1` | 北海道厚生局 |
+         *     | `2` | 東北厚生局 |
+         *     | `3` | 関東信越厚生局 |
+         *     | `4` | 東海北陸厚生局 |
+         *     | `5` | 近畿厚生局 |
+         *     | `6` | 中国四国厚生局 |
+         *     | `7` | 四国厚生局 |
+         *     | `8` | 九州厚生局 |
          * @enum {integer}
          */
         RhbBureau: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
     };
     responses: {
-        /** @description Validation error */
+        /** @description パラメータの誤り */
         ValidationException: {
             headers: {
                 [name: string]: unknown;
             };
             content: {
                 "application/json": {
-                    /** @description Errors overview. */
+                    /** @description エラーの概要 */
                     message: string;
-                    /** @description A detailed description of each field that failed validation. */
+                    /** @description パラメータごとのエラーメッセージ */
                     errors: {
                         [key: string]: string[];
                     };
                 };
             };
         };
-        /** @description Not found */
+        /** @description 見つからない */
         ModelNotFoundException: {
             headers: {
                 [name: string]: unknown;
             };
             content: {
                 "application/json": {
-                    /** @description Error overview. */
+                    /** @description エラーの概要 */
                     message: string;
                 };
             };
@@ -490,22 +794,76 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
+                            /**
+                             * Format: date-time
+                             * @description ファイルを作った日時
+                             * @example 2026-10-05T22:16:01.654097Z
+                             */
                             generated_at: string;
-                            /** @description ファイルに含まれる施設のうち、最も新しい `updated_at`。差分の同期の起点に使える */
+                            /**
+                             * Format: date-time
+                             * @description ファイルに含まれる施設のうち、最も新しい `updated_at`。差分の同期の起点に使える
+                             * @example 2026-10-05T06:56:45.000000Z
+                             */
                             data_updated_at: string;
-                            files: unknown[];
+                            /**
+                             * @description ファイルの一覧。`format` は `csv` か `jsonl`、`prefecture` は都道府県（全体のファイルは null）、`records` は施設の数、`size` はバイト数、`sha256` はファイルのハッシュ値、`url` はダウンロードのURL
+                             * @example [
+                             *       {
+                             *         "name": "medical-facilities-01.csv.gz",
+                             *         "format": "csv",
+                             *         "prefecture": {
+                             *           "code": "01",
+                             *           "label": "北海道"
+                             *         },
+                             *         "records": 8130,
+                             *         "size": 428199,
+                             *         "sha256": "e45239903993bda22a9bcbe4d5aabf64bc26cf436c06eea5583e054c90377934",
+                             *         "url": "https://168-110-42-30.sslip.io/api/v1/exports/medical-facilities-01.csv.gz"
+                             *       },
+                             *       {
+                             *         "name": "medical-facilities-all.jsonl.gz",
+                             *         "format": "jsonl",
+                             *         "prefecture": null,
+                             *         "records": 224517,
+                             *         "size": 16248504,
+                             *         "sha256": "a0c6681a6d420e2dce225445426c087c68672bf02515b365fd0dec0c98d8ef01",
+                             *         "url": "https://168-110-42-30.sslip.io/api/v1/exports/medical-facilities-all.jsonl.gz"
+                             *       }
+                             *     ]
+                             */
+                            files: {
+                                name: string;
+                                /** @enum {string} */
+                                format: "csv" | "jsonl";
+                                prefecture: {
+                                    code: string;
+                                    label: string;
+                                } | null;
+                                records: number;
+                                size: number;
+                                sha256: string;
+                                url: string;
+                            }[];
                         };
                         meta: {
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -521,6 +879,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -535,7 +900,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -607,67 +972,37 @@ export interface operations {
                 bureau_code?: components["schemas"]["RhbBureau"];
                 /** @description 診療科目の大分類 */
                 department_category?: components["schemas"]["DepartmentBaseCategory"];
-                /**
-                 * @description 10桁の医療機関コード（都道府県番号＋点数表番号＋医療機関コード7桁）。
-                 *     カンマ区切りで最大100件まで指定できる
-                 */
+                /** @description 10桁の医療機関コード（都道府県番号＋点数表番号＋医療機関コード7桁）。カンマ区切りで最大100件まで指定できる */
                 medical_institution_code?: string;
-                /**
-                 * @description 施設名・住所のあいまい検索キーワード（全角半角・異体字ゆれを吸収）。
-                 *     空白（全角・半角）で区切ると、すべての語を含む施設を返す（例: `札幌 眼科`、最大5語）
-                 */
+                /** @description 施設名・住所のあいまい検索キーワード（全角半角・異体字ゆれを吸収）。空白（全角・半角）で区切ると、すべての語を含む施設を返す（例: `札幌 眼科`、最大5語） */
                 q?: string;
                 /** @description 指定年月日がこの日以降（YYYY-MM-DD） */
                 designated_from?: string;
                 /** @description 指定年月日がこの日以前（YYYY-MM-DD） */
                 designated_to?: string;
-                /**
-                 * @description 登録理由（`designation_history` の `reason`）。例: 新規、交代、組織変更、移転。
-                 *     指定年月日と組み合わせると「期間内に新規開業した施設」を取得できる
-                 */
+                /** @description 登録理由（`designation_history` の `reason`）。例: 新規、交代、組織変更、移転。指定年月日と組み合わせると「期間内に新規開業した施設」を取得できる */
                 designation_reason?: string;
-                /**
-                 * @description 並び順。`designated_on` / `-designated_on`（指定年月日の古い順 / 新しい順、指定年月日のない施設は末尾）、
-                 *     `updated_at` / `-updated_at`（内容が変わった日時の古い順 / 新しい順）。省略時はid順
-                 */
+                /** @description 並び順。`designated_on` / `-designated_on`（指定年月日の古い順 / 新しい順、指定年月日のない施設は末尾）、`updated_at` / `-updated_at`（内容が変わった日時の古い順 / 新しい順）。省略時はid順 */
                 sort?: "id" | "designated_on" | "-designated_on" | "updated_at" | "-updated_at";
-                /**
-                 * @description この日時以降に内容が変わった施設だけを返す（ISO 8601、例: 2026-10-01T05:00:00Z）。
-                 *     廃止・再開も含む。差分の同期には `sort=updated_at` と組み合わせる
-                 */
+                /** @description この日時以降に内容が変わった施設だけを返す（ISO 8601、例: 2026-10-01T05:00:00Z）。廃止・再開も含む。差分の同期には `sort=updated_at` と組み合わせる */
                 updated_since?: string;
-                /**
-                 * @description この日時に受付中の施設だけを返す（ISO 8601。時差の指定がなければ日本時間。例: `2026-10-05T10:30`）。
-                 *     厚生労働省「医療情報ネット」の診療時間で判定し（受付時間があれば受付時間、なければ診療時間。どれかの診療科が開いていれば対象）、
-                 *     祝日は「祝」の時刻、「第2水曜休診」のような休みも反映する。照合できない施設や、年末年始などの臨時の休みは判定できない
-                 */
+                /** @description この日時に受付中の施設だけを返す（ISO 8601。時差の指定がなければ日本時間。例: `2026-10-05T10:30`）。厚生労働省「医療情報ネット」の診療時間で判定し（受付時間があれば受付時間、なければ診療時間。どれかの診療科が開いていれば対象）、祝日は「祝」の時刻、「第2水曜休診」のような休みも反映する。照合できない施設や、年末年始などの臨時の休みは判定できない */
                 open_at?: string;
-                /**
-                 * @description 検索地点の緯度（世界測地系）。`longitude` と組み合わせ、`radius` 以内の施設を近い順に返す
-                 *     （`sort` を指定した場合はその順）。各施設に `distance` が付く
-                 */
+                /** @description 検索地点の緯度（世界測地系）。`longitude` と組み合わせ、`radius` 以内の施設を近い順に返す（`sort` を指定した場合はその順）。各施設に `distance` が付く */
                 latitude?: number;
                 /** @description 検索地点の経度（世界測地系） */
                 longitude?: number;
-                /** @description 検索半径（メートル、デフォルト1000、最大20000）。`latitude`・`longitude` と組み合わせる */
+                /** @description 検索半径（メートル、デフォルト1000、最大50000）。`latitude`・`longitude` と組み合わせる */
                 radius?: number;
                 /** @description 1ページあたりの件数（デフォルト25、最大100） */
                 per_page?: number;
                 /** @description ページ番号。最初の1万件まで（上限は `meta.max_page`）。それより先は、条件を絞り込んでください */
                 page?: number;
-                /**
-                 * @description `cursor` にすると、ページ番号の代わりにカーソルでページを送る（件数の上限なし）。
-                 *     次のページは `links.next`（または `meta.next_cursor` を `cursor` に渡す）で取得する。
-                 *     全件の取得や差分の同期向け。並び順は id 順か `sort=updated_at` のときだけ使える
-                 */
+                /** @description `cursor` にすると、ページ番号の代わりにカーソルでページを送る（件数の上限なし）。次のページは `links.next`（または `meta.next_cursor` を `cursor` に渡す）で取得する。全件の取得や差分の同期向け。並び順は id 順か `sort=updated_at` のときだけ使える */
                 pagination?: "cursor";
                 /** @description カーソル方式の次のページの位置（`meta.next_cursor` の値） */
                 cursor?: string;
-                /**
-                 * @description `capped` にすると、件数（`meta.total`）を最初の1万件を超えた時点で数え終えて速く返す。
-                 *     超えたときは `meta.total_is_capped` が true で、`meta.total` は 10,001（実際の件数はそれ以上）。
-                 *     ページ番号で移動できる範囲（`meta.max_page`）は変わらない。件数を「1万件以上」と表示できる画面向け
-                 */
+                /** @description `capped` にすると、件数（`meta.total`）を最初の1万件を超えた時点で数え終えて速く返す。超えたときは `meta.total_is_capped` が true で、`meta.total` は 10,001（実際の件数はそれ以上）。ページ番号で移動できる範囲（`meta.max_page`）は変わらない。件数を「1万件以上」と表示できる画面向け */
                 total?: "capped";
             };
             header?: never;
@@ -676,11 +1011,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /**
-             * @description Paginated set of `MedicalFacilityResource`
-             *
-             *     Paginated set of `MedicalFacilityResource`
-             */
+            /** @description `MedicalFacilityResource` のページ */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -698,32 +1029,47 @@ export interface operations {
                             current_page: number;
                             from: number | null;
                             last_page: number;
-                            /** @description Generated paginator links. */
+                            /** @description ページ番号の一覧（前後のページへのリンクを含む） */
                             links: {
                                 url: string | null;
                                 label: string;
                                 active: boolean;
                             }[];
-                            /** @description Base path for paginator generated URLs. */
+                            /** @description ページのURLの基になるパス */
                             path: string | null;
-                            /** @description Number of items shown per page. */
+                            /** @description 1ページあたりの件数 */
                             per_page: number;
-                            /** @description Number of the last item in the slice. */
+                            /** @description このページの最後の項目が全体で何件目か */
                             to: number | null;
-                            /** @description Total number of items being paginated. */
+                            /** @description 条件に合う件数 */
                             total: number;
+                            /**
+                             * @description ページ番号で取得できる最後のページ（最初の1万件まで）
+                             * @example 400
+                             */
                             max_page: number;
+                            /**
+                             * @description `total=capped` で件数を数え終えたか。true なら `total` は 10,001 で、実際の件数はそれ以上
+                             * @example false
+                             */
                             total_is_capped: boolean;
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -739,6 +1085,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -753,7 +1106,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -769,24 +1122,31 @@ export interface operations {
                             next: string | null;
                         };
                         meta: {
-                            /** @description Base path for paginator generated URLs. */
+                            /** @description ページのURLの基になるパス */
                             path: string | null;
-                            /** @description Number of items shown per page. */
+                            /** @description 1ページあたりの件数 */
                             per_page: number;
-                            /** @description The "cursor" that points to the next set of items. */
+                            /** @description 次のページのカーソル（最後のページならnull） */
                             next_cursor: string | null;
-                            /** @description The "cursor" that points to the previous set of items. */
+                            /** @description 前のページのカーソル（最初のページならnull） */
                             prev_cursor: string | null;
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -802,6 +1162,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -816,7 +1183,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -834,7 +1201,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The medical facility ID */
+                /** @description 施設のID（施設一覧の `id`） */
                 medicalFacility: number;
             };
             cookie?: never;
@@ -851,15 +1218,22 @@ export interface operations {
                         data: components["schemas"]["MedicalFacilityResource"];
                         meta: {
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -875,6 +1249,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -889,7 +1270,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -907,14 +1288,14 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The medical facility ID */
+                /** @description 施設のID（施設一覧の `id`） */
                 medicalFacility: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Array of `MedicalFacilityEventResource` */
+            /** @description `MedicalFacilityEventResource` の配列 */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -924,15 +1305,22 @@ export interface operations {
                         data: components["schemas"]["MedicalFacilityEventResource"][];
                         meta: {
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -948,6 +1336,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -962,7 +1357,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -984,11 +1379,7 @@ export interface operations {
                 occurred_from?: string;
                 /** @description 変化が載った公開データの日付がこの日以前（YYYY-MM-DD） */
                 occurred_to?: string;
-                /**
-                 * @description この日時以降に検知された変化だけを返す（ISO 8601、例: 2026-10-01T05:00:00+09:00）。
-                 *     `occurred_on` は公開データの日付で、取り込んで検知するのはその数日〜数週間後のため、
-                 *     「前回確認してから増えた変化」はこちらで絞り込む
-                 */
+                /** @description この日時以降に検知された変化だけを返す（ISO 8601、例: 2026-10-01T05:00:00+09:00）。`occurred_on` は公開データの日付で、取り込んで検知するのはその数日〜数週間後のため、「前回確認してから増えた変化」はこちらで絞り込む */
                 detected_since?: string;
                 /** @description 施設の都道府県コード（JIS X 0401の2桁、01〜47） */
                 prefecture_code?: components["schemas"]["Prefecture"];
@@ -1005,7 +1396,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Paginated set of `MedicalFacilityEventWithFacilityResource` */
+            /** @description `MedicalFacilityEventWithFacilityResource` のページ */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1023,31 +1414,42 @@ export interface operations {
                             current_page: number;
                             from: number | null;
                             last_page: number;
-                            /** @description Generated paginator links. */
+                            /** @description ページ番号の一覧（前後のページへのリンクを含む） */
                             links: {
                                 url: string | null;
                                 label: string;
                                 active: boolean;
                             }[];
-                            /** @description Base path for paginator generated URLs. */
+                            /** @description ページのURLの基になるパス */
                             path: string | null;
-                            /** @description Number of items shown per page. */
+                            /** @description 1ページあたりの件数 */
                             per_page: number;
-                            /** @description Number of the last item in the slice. */
+                            /** @description このページの最後の項目が全体で何件目か */
                             to: number | null;
-                            /** @description Total number of items being paginated. */
+                            /** @description 条件に合う件数 */
                             total: number;
+                            /**
+                             * @description ページ番号で取得できる最後のページ（最初の1万件まで）
+                             * @example 400
+                             */
                             max_page: number;
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -1063,6 +1465,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -1077,7 +1486,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -1093,10 +1502,7 @@ export interface operations {
     "v1.stats.facility-events": {
         parameters: {
             query: {
-                /**
-                 * @description 集計の単位。`month`（変化が載った公開データの月）、`municipality`（施設の市区町村）。
-                 *     `month` のときは `occurred_from`・`occurred_to` が必須で、期間は60か月まで
-                 */
+                /** @description 集計の単位。`month`（変化が載った公開データの月）、`municipality`（施設の市区町村）。`month` のときは `occurred_from`・`occurred_to` が必須で、期間は60か月まで */
                 group_by: "month" | "municipality";
                 /** @description 変化の種類（1: 新規 / 2: 廃止） */
                 event_type: 1 | 2;
@@ -1125,26 +1531,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @description 集計結果。`key` は `month` なら `YYYY-MM`、`municipality` なら市区町村コード */
+                        /**
+                         * @description 集計結果。`key` は `month` なら `YYYY-MM`、`municipality` なら市区町村コードで、`label` はその名前、`count` は変化の数です
+                         * @example [
+                         *       {
+                         *         "key": "2026-08",
+                         *         "label": "2026年8月",
+                         *         "count": 0
+                         *       },
+                         *       {
+                         *         "key": "2026-09",
+                         *         "label": "2026年9月",
+                         *         "count": 0
+                         *       },
+                         *       {
+                         *         "key": "2026-10",
+                         *         "label": "2026年10月",
+                         *         "count": 483
+                         *       }
+                         *     ]
+                         */
                         data: {
                             key: string | null;
                             label: string | null;
                             count: number;
                         }[];
                         meta: {
-                            /** @description 絞り込んだ変化の数 */
+                            /**
+                             * @description 絞り込んだ変化の数
+                             * @example 483
+                             */
                             total: number;
+                            /**
+                             * @description 指定した集計の単位
+                             * @example month
+                             */
                             group_by: string;
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -1160,6 +1599,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -1174,7 +1620,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -1192,7 +1638,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                /** @description The medical facility ID */
+                /** @description 施設のID（施設一覧の `id`） */
                 medicalFacility: number;
             };
             cookie?: never;
@@ -1209,8 +1655,68 @@ export interface operations {
                             /**
                              * Format: date
                              * @description 医療情報ネットの公開時点
+                             * @example 2026-06-01
                              */
                             published_on: string;
+                            /**
+                             * @description 診療時間。`departments` は同じ診療時間の診療科、`slots` は時間帯（`number` は医療情報ネットでの時間帯の番号）ごとの曜日別の時刻。`opens`・`closes` は診療時間、`reception_opens`・`reception_closes` は受付時間（`HH:MM`）
+                             * @example [
+                             *       {
+                             *         "departments": [
+                             *           "内科"
+                             *         ],
+                             *         "slots": [
+                             *           {
+                             *             "number": 1,
+                             *             "days": [
+                             *               {
+                             *                 "day": "mon",
+                             *                 "opens": "09:00",
+                             *                 "closes": "17:00",
+                             *                 "reception_opens": "09:00",
+                             *                 "reception_closes": "16:30"
+                             *               },
+                             *               {
+                             *                 "day": "tue",
+                             *                 "opens": "09:00",
+                             *                 "closes": "17:00",
+                             *                 "reception_opens": "09:00",
+                             *                 "reception_closes": "16:30"
+                             *               },
+                             *               {
+                             *                 "day": "wed",
+                             *                 "opens": "09:00",
+                             *                 "closes": "17:00",
+                             *                 "reception_opens": "09:00",
+                             *                 "reception_closes": "16:30"
+                             *               },
+                             *               {
+                             *                 "day": "thu",
+                             *                 "opens": "09:00",
+                             *                 "closes": "17:00",
+                             *                 "reception_opens": "09:00",
+                             *                 "reception_closes": "16:30"
+                             *               },
+                             *               {
+                             *                 "day": "fri",
+                             *                 "opens": "09:00",
+                             *                 "closes": "17:00",
+                             *                 "reception_opens": "09:00",
+                             *                 "reception_closes": "16:30"
+                             *               },
+                             *               {
+                             *                 "day": "sat",
+                             *                 "opens": "09:00",
+                             *                 "closes": "12:30",
+                             *                 "reception_opens": "09:00",
+                             *                 "reception_closes": "12:00"
+                             *               }
+                             *             ]
+                             *           }
+                             *         ]
+                             *       }
+                             *     ]
+                             */
                             schedules: {
                                 departments: string[];
                                 slots: {
@@ -1225,6 +1731,22 @@ export interface operations {
                                     }[];
                                 }[];
                             }[];
+                            /**
+                             * @description 定休日。`weekly` は毎週の休み、`monthly` は決まった週の休み（`week` が2なら第2週）、`holidays` は祝日に休むか（記載がなければnull）、`other` はその他（自由記述）。定休日の記載がなければnull
+                             * @example {
+                             *       "weekly": [
+                             *         "sun"
+                             *       ],
+                             *       "monthly": [
+                             *         {
+                             *           "week": 2,
+                             *           "day": "sat"
+                             *         }
+                             *       ],
+                             *       "holidays": true,
+                             *       "other": "01月01日，01月02日，01月03日，01月04日，02月12日，12月29日，12月30日，12月31日"
+                             *     }
+                             */
                             closures: {
                                 weekly: ("mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun")[];
                                 monthly: {
@@ -1238,15 +1760,22 @@ export interface operations {
                         } | null;
                         meta: {
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -1262,6 +1791,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -1276,7 +1812,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -1293,8 +1829,12 @@ export interface operations {
         parameters: {
             query: {
                 /**
-                 * @description 集計の単位。`month`（指定年月日の月）、`municipality`（市区町村）、`department_category`（診療科目の大分類）。
-                 *     `month` のときは `designated_from`・`designated_to` が必須で、期間は60か月まで
+                 * @description 集計の単位。`month`（指定年月日の月）、`municipality`（市区町村）、`department_category`（診療科目の大分類）。`month` のときは `designated_from`・`designated_to` が必須で、期間は60か月まで
+                 *     | |
+                 *     |---|
+                 *     | `month` <br/> 指定年月日の月（期間内のすべての月を返す） |
+                 *     | `municipality` <br/> 市区町村 |
+                 *     | `department_category` <br/> 診療科目の大分類（複数の大分類を持つ施設は、それぞれに数える） |
                  */
                 group_by: components["schemas"]["FacilityStatsGrouping"];
                 /** @description 都道府県コード（JIS X 0401の2桁、01〜47） */
@@ -1307,10 +1847,7 @@ export interface operations {
                 status?: components["schemas"]["MedicalFacilityStatus"];
                 /** @description 診療科目の大分類 */
                 department_category?: components["schemas"]["DepartmentBaseCategory"];
-                /**
-                 * @description 登録理由（`designation_history` の `reason`）。例: 新規、交代、組織変更、移転。
-                 *     指定年月日と組み合わせると「期間内に新規開業した施設」を数えられる
-                 */
+                /** @description 登録理由（`designation_history` の `reason`）。例: 新規、交代、組織変更、移転。指定年月日と組み合わせると「期間内に新規開業した施設」を数えられる */
                 designation_reason?: string;
                 /** @description 指定年月日がこの日以降（YYYY-MM-DD）。`group_by=month` では必須 */
                 designated_from?: string;
@@ -1330,8 +1867,30 @@ export interface operations {
                 content: {
                     "application/json": {
                         /**
-                         * @description 集計結果。`key` は `month` なら `YYYY-MM`、`municipality` なら市区町村コード、
-                         *     `department_category` なら診療科目のコード
+                         * @description 集計結果。`key` は `month` なら `YYYY-MM`、`municipality` なら市区町村コード、`department_category` なら診療科目のコードで、`label` はその名前、`count` は施設の数です。`population` は市区町村の人口、`count_per_10k` は人口1万人あたりの施設の数で、`municipality` 以外では null
+                         * @example [
+                         *       {
+                         *         "key": "13112",
+                         *         "label": "世田谷区",
+                         *         "count": 2193,
+                         *         "population": 928666,
+                         *         "count_per_10k": 23.61
+                         *       },
+                         *       {
+                         *         "key": "13111",
+                         *         "label": "大田区",
+                         *         "count": 1546,
+                         *         "population": 745048,
+                         *         "count_per_10k": 20.75
+                         *       },
+                         *       {
+                         *         "key": "13103",
+                         *         "label": "港区",
+                         *         "count": 1468,
+                         *         "population": 269877,
+                         *         "count_per_10k": 54.4
+                         *       }
+                         *     ]
                          */
                         data: {
                             key: number | string | null;
@@ -1341,21 +1900,38 @@ export interface operations {
                             count_per_10k: number | null;
                         }[];
                         meta: {
-                            /** @description 絞り込んだ施設の数 */
+                            /**
+                             * @description 絞り込んだ施設の数
+                             * @example 31469
+                             */
                             total: number;
+                            /**
+                             * @description 指定した集計の単位
+                             * @example municipality
+                             */
                             group_by: string;
-                            /** @description `population` の基準日（YYYY-MM-DD）。`municipality` 以外、または人口が未取込なら null */
+                            /**
+                             * @description `population` の基準日（YYYY-MM-DD）。`municipality` 以外、または人口が未取込なら null
+                             * @example 2026-01-01
+                             */
                             population_as_of: string | null;
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -1371,6 +1947,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -1385,7 +1968,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
@@ -1414,6 +1997,27 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
+                            /**
+                             * @description 都道府県と、その施設の指定一覧を公開している地方厚生局。`code` は `prefecture_code` に渡せる
+                             * @example [
+                             *       {
+                             *         "code": "01",
+                             *         "label": "北海道",
+                             *         "bureau": {
+                             *           "code": 1,
+                             *           "label": "北海道厚生局"
+                             *         }
+                             *       },
+                             *       {
+                             *         "code": "02",
+                             *         "label": "青森県",
+                             *         "bureau": {
+                             *           "code": 2,
+                             *           "label": "東北厚生局"
+                             *         }
+                             *       }
+                             *     ]
+                             */
                             prefectures: {
                                 code: string;
                                 label: string;
@@ -1422,31 +2026,144 @@ export interface operations {
                                     label: string;
                                 };
                             }[];
+                            /**
+                             * @description 施設種別。`code` は `institution_type` に渡せる
+                             * @example [
+                             *       {
+                             *         "code": 1,
+                             *         "label": "病院"
+                             *       },
+                             *       {
+                             *         "code": 2,
+                             *         "label": "診療所"
+                             *       },
+                             *       {
+                             *         "code": 3,
+                             *         "label": "歯科診療所"
+                             *       },
+                             *       {
+                             *         "code": 4,
+                             *         "label": "薬局"
+                             *       }
+                             *     ]
+                             */
                             institution_types: {
                                 code: number;
                                 label: string;
                             }[];
+                            /**
+                             * @description 指定状態。`code` は `status` に渡せる
+                             * @example [
+                             *       {
+                             *         "code": 1,
+                             *         "label": "指定中"
+                             *       },
+                             *       {
+                             *         "code": 2,
+                             *         "label": "廃止"
+                             *       },
+                             *       {
+                             *         "code": 3,
+                             *         "label": "休止"
+                             *       }
+                             *     ]
+                             */
                             statuses: {
                                 code: number;
                                 label: string;
                             }[];
+                            /**
+                             * @description 地方厚生局。`code` は `bureau_code` に渡せる
+                             * @example [
+                             *       {
+                             *         "code": 1,
+                             *         "label": "北海道厚生局"
+                             *       },
+                             *       {
+                             *         "code": 2,
+                             *         "label": "東北厚生局"
+                             *       }
+                             *     ]
+                             */
                             bureaus: {
                                 code: number;
                                 label: string;
                             }[];
+                            /**
+                             * @description 診療科目の大分類。`code` は `department_category` に渡せる。薬局だけを取り扱うときは空の配列
+                             * @example [
+                             *       {
+                             *         "code": 1,
+                             *         "label": "内科"
+                             *       },
+                             *       {
+                             *         "code": 2,
+                             *         "label": "外科"
+                             *       },
+                             *       {
+                             *         "code": 3,
+                             *         "label": "小児科"
+                             *       }
+                             *     ]
+                             */
                             department_categories: {
                                 code: number;
                                 label: string;
                             }[];
+                            /**
+                             * @description 変化の種類。`code` は変化の一覧の `event_type` に渡せる
+                             * @example [
+                             *       {
+                             *         "code": 1,
+                             *         "label": "新規"
+                             *       },
+                             *       {
+                             *         "code": 2,
+                             *         "label": "廃止"
+                             *       },
+                             *       {
+                             *         "code": 3,
+                             *         "label": "変更"
+                             *       }
+                             *     ]
+                             */
                             event_types: {
                                 code: number;
                                 label: string;
                             }[];
+                            /**
+                             * @description 座標の精度（施設の `location.level`）
+                             * @example [
+                             *       {
+                             *         "code": 1,
+                             *         "label": "住居"
+                             *       },
+                             *       {
+                             *         "code": 2,
+                             *         "label": "街区"
+                             *       },
+                             *       {
+                             *         "code": 3,
+                             *         "label": "地番"
+                             *       }
+                             *     ]
+                             */
                             geocode_levels: {
                                 code: number;
                                 label: string;
                             }[];
-                            /** @description 代表的な登録理由（元データは自由記述） */
+                            /**
+                             * @description 代表的な登録理由（元データは自由記述）。`designation_reason` に渡せる
+                             * @example [
+                             *       "新規",
+                             *       "組織変更",
+                             *       "交代",
+                             *       "移動",
+                             *       "移転",
+                             *       "その他",
+                             *       "継承"
+                             *     ]
+                             */
                             designation_reasons: string[];
                         };
                     };
@@ -1474,21 +2191,45 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /**
+                         * @description 期間内の祝日・休日（日付順）。`date` は日付（YYYY-MM-DD）、`name` は祝日の名前で、振替休日と国民の休日は「休日」です
+                         * @example [
+                         *       {
+                         *         "date": "2026-09-21",
+                         *         "name": "敬老の日"
+                         *       },
+                         *       {
+                         *         "date": "2026-09-22",
+                         *         "name": "休日"
+                         *       },
+                         *       {
+                         *         "date": "2026-09-23",
+                         *         "name": "秋分の日"
+                         *       }
+                         *     ]
+                         */
                         data: {
                             date: string;
                             name: string;
                         }[];
                         meta: {
                             attribution: {
-                                /** @constant */
+                                /**
+                                 * @description 出典の表示。データを利用・再配布するときは、この文と各出典を表示する。
+                                 * @constant
+                                 */
                                 notice: "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。";
+                                /** @description 利用条件（加工したデータも同じ条件で提供する）。 */
                                 license: {
                                     /** @constant */
                                     name: "公共データ利用規約（第1.0版）";
                                     /** @constant */
                                     url: "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0";
                                 };
-                                /** @constant */
+                                /**
+                                 * @description 免責事項。
+                                 * @constant
+                                 */
                                 disclaimer: "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。";
                                 /** @description 市区町村・座標の出典（デジタル庁 アドレス・ベース・レジストリ、CC BY 4.0）。 */
                                 address_source: {
@@ -1504,6 +2245,13 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html";
                                 };
+                                /** @description 住所からも医療情報ネットからも町丁目までしか求められない病院・診療所・歯科診療所の座標の出典（国土交通省、CC BY 4.0）。 */
+                                national_land_source: {
+                                    /** @constant */
+                                    name: "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成";
+                                    /** @constant */
+                                    url: "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html";
+                                };
                                 /** @description 市区町村の人口の出典（総務省、政府標準利用規約・CC BY 4.0 互換）。集計APIの人口あたりの件数に使う。 */
                                 population_source: {
                                     /** @constant */
@@ -1518,7 +2266,7 @@ export interface operations {
                                     /** @constant */
                                     url: "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html";
                                 };
-                                /** @description The bureaus this installation actually draws from (RhbScope). */
+                                /** @description 施設データの出典（このAPIが取り扱う地方厚生局と、その公開ページ）。 */
                                 sources: {
                                     bureau: string;
                                     url: string;
