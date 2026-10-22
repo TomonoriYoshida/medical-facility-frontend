@@ -20,6 +20,7 @@ export default function FacilityCard({ facility }: { facility: MedicalFacility }
             {facility.institution_type.label}
             {beds > 0 && ` ／ ${beds}床`}
             {facility.designated_on && ` ／ 指定 ${formatDate(facility.designated_on)}`}
+            {facility.e_prescription && " ／ 電子処方箋に対応"}
           </p>
         </div>
         <StatusBadge status={facility.status} />

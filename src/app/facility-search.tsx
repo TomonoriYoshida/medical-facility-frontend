@@ -21,9 +21,16 @@ const filterKeys = [
   "institution_type",
   "department_category",
   "status",
+  "e_prescription",
   "designation_reason",
   "sort",
 ] as const;
+
+/** The API takes 1 / 0 (not true / false) for e_prescription. */
+const ePrescriptionOptions = [
+  { value: "1", label: "対応している" },
+  { value: "0", label: "対応していない" },
+];
 
 
 const labelClass = "block text-xs font-bold text-accent";
@@ -42,7 +49,7 @@ function toApiQuery(searchParams: URLSearchParams): FacilityListQuery & { page?:
   for (const key of filterKeys) {
     const value = searchParams.get(key);
     if (value) {
-      query[key] = ["institution_type", "department_category", "status"].includes(key)
+      query[key] = ["institution_type", "department_category", "status", "e_prescription"].includes(key)
         ? Number(value)
         : value;
     }
@@ -174,6 +181,14 @@ export default function FacilitySearch() {
             label="指定状態"
             defaultValue={searchParams.get("status")}
             options={optionsData?.statuses.map((s) => ({ value: String(s.code), label: s.label }))}
+            className={selectClass}
+            onChange={search}
+          />
+          <FilterSelect
+            name="e_prescription"
+            label="電子処方箋"
+            defaultValue={searchParams.get("e_prescription")}
+            options={ePrescriptionOptions}
             className={selectClass}
             onChange={search}
           />
