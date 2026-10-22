@@ -14,6 +14,7 @@ const pageSize = 100;
 const header = [
   "医療機関コード",
   "名称",
+  "フリガナ",
   "種別",
   "指定状態",
   "指定年月日",
@@ -23,12 +24,16 @@ const header = [
   "電話番号",
   "診療科",
   "病床数",
+  "ホームページ",
+  "電子処方箋の運用開始日",
+  "リフィル処方箋の運用開始日",
 ];
 
 function toRow(facility: MedicalFacility): (string | null)[] {
   return [
     facility.medical_institution_code ?? facility.facility_code,
     facility.name,
+    facility.name_kana,
     facility.institution_type.label,
     facility.status.label,
     facility.designated_on,
@@ -38,6 +43,9 @@ function toRow(facility: MedicalFacility): (string | null)[] {
     facility.phone_number,
     facility.department_categories.map((department) => department.label).join("、"),
     facility.bed_counts ? formatBedCounts(facility.bed_counts) : null,
+    facility.website_url,
+    facility.e_prescription?.started_on ?? null,
+    facility.e_prescription?.refill_started_on ?? null,
   ];
 }
 

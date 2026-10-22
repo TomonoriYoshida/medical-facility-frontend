@@ -14,6 +14,7 @@ import StatusBadge from "@/components/status-badge";
 import { apiOrigin } from "@/lib/api/client";
 import { useFacility, useFacilityEvents, useFacilityOpeningHours } from "@/lib/api/queries";
 import { formatBedCounts, formatDate } from "@/lib/format";
+import { safeExternalUrl } from "@/lib/url";
 
 function parseId(value: string | null): number | null {
   const id = Number(value);
@@ -91,6 +92,7 @@ export default function FacilityDetail() {
               </tr>
             </thead>
             <tbody>
+              <Row label="フリガナ">{data.name_kana ?? "—"}</Row>
               <Row label="所在地">
                 {data.postal_code && <span className="mr-2">〒{data.postal_code}</span>}
                 {fullAddress}
@@ -105,6 +107,23 @@ export default function FacilityDetail() {
                   </a>
                 ) : (
                   "—"
+                )}
+              </Row>
+              <Row label="ホームページ">
+                <WebsiteLink url={data.website_url} />
+              </Row>
+              <Row label="電子処方箋">
+                {data.e_prescription ? (
+                  <>
+                    対応（{formatDate(data.e_prescription.started_on)}から）
+                    {data.e_prescription.refill_started_on && (
+                      <span className="block">
+                        リフィル処方箋にも対応（{formatDate(data.e_prescription.refill_started_on)}から）
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  "厚生労働省の対応施設リストにありません"
                 )}
               </Row>
               <Row label="医療機関コード">{data.medical_institution_code ?? data.facility_code}</Row>
@@ -277,6 +296,22 @@ export default function FacilityDetail() {
 
       <AttributionNotice attribution={meta.attribution} />
     </>
+  );
+}
+
+/**
+ * The API repairs the source's broken URLs and returns http(s) only; checked
+ * again here, since it becomes a link.
+ */
+function WebsiteLink({ url }: { url: string | null }) {
+  const href = url ? safeExternalUrl(url) : undefined;
+  if (!href) {
+    return <>—</>;
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`break-all ${linkClass}`}>
+      {href} ↗
+    </a>
   );
 }
 
