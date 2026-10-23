@@ -4,8 +4,10 @@
 import { createReadStream, existsSync, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const root = new URL("../out/", import.meta.url).pathname;
+// fileURLToPath: .pathname would keep a checkout path with spaces or Japanese percent-encoded.
+const root = fileURLToPath(new URL("../out/", import.meta.url));
 const port = Number(process.env.PORT ?? 4173);
 const types = {
   ".html": "text/html; charset=utf-8",
@@ -22,8 +24,18 @@ const types = {
 };
 
 function send(response, status, file) {
-  response.writeHead(status, { "Content-Type": types[extname(file)] ?? "application/octet-stream" });
-  createReadStream(file).pipe(response);
+  const stream = createReadStream(file);
+  // A missing file (out/ not built yet, or no 404.html) answers 500 rather than crashing the server.
+  stream.on("error", (error) => {
+    if (!response.headersSent) {
+      response.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
+    }
+    response.end(`Cannot read ${file}: ${error.message}. Run npm run build:e2e first.`);
+  });
+  stream.once("open", () => {
+    response.writeHead(status, { "Content-Type": types[extname(file)] ?? "application/octet-stream" });
+    stream.pipe(response);
+  });
 }
 
 createServer((request, response) => {
