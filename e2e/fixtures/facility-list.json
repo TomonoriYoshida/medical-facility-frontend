@@ -1,0 +1,340 @@
+{
+  "data": [
+    {
+      "id": 33971,
+      "facility_code": "0121376",
+      "medical_institution_code": "1310121376",
+      "institution_type": {
+        "code": 2,
+        "label": "診療所"
+      },
+      "status": {
+        "code": 1,
+        "label": "指定中"
+      },
+      "bureau": {
+        "code": 3,
+        "label": "関東信越厚生局"
+      },
+      "name": "山下小児科医院",
+      "name_kana": null,
+      "prefecture_code": "13",
+      "prefecture": {
+        "code": "13",
+        "label": "東京都"
+      },
+      "municipality": {
+        "code": "13101",
+        "label": "千代田区"
+      },
+      "postal_code": "101-0021",
+      "address": "千代田区外神田五丁目６番１６号",
+      "location": null,
+      "phone_number": "03-3831-8817",
+      "website_url": null,
+      "designated_on": "1957-09-28",
+      "designation_history": [
+        {
+          "date": "2023-09-28",
+          "reason": null
+        }
+      ],
+      "bed_counts": null,
+      "department_categories": [
+        {
+          "code": 3,
+          "label": "小児科"
+        }
+      ],
+      "e_prescription": null,
+      "created_at": "2026-10-21T19:26:19.000000Z",
+      "updated_at": "2026-10-21T19:26:19.000000Z"
+    },
+    {
+      "id": 33972,
+      "facility_code": "0121954",
+      "medical_institution_code": "1310121954",
+      "institution_type": {
+        "code": 2,
+        "label": "診療所"
+      },
+      "status": {
+        "code": 1,
+        "label": "指定中"
+      },
+      "bureau": {
+        "code": 3,
+        "label": "関東信越厚生局"
+      },
+      "name": "財務省診療所",
+      "name_kana": "ザイムショウシンリョウジョ",
+      "prefecture_code": "13",
+      "prefecture": {
+        "code": "13",
+        "label": "東京都"
+      },
+      "municipality": {
+        "code": "13101",
+        "label": "千代田区"
+      },
+      "postal_code": "100-0013",
+      "address": "千代田区霞が関三丁目１番１号",
+      "location": null,
+      "phone_number": "03-3581-3723",
+      "website_url": null,
+      "designated_on": "1957-07-01",
+      "designation_history": [
+        {
+          "date": "2023-07-01",
+          "reason": null
+        }
+      ],
+      "bed_counts": null,
+      "department_categories": [
+        {
+          "code": 1,
+          "label": "内科"
+        },
+        {
+          "code": 2,
+          "label": "外科"
+        },
+        {
+          "code": 13,
+          "label": "精神科"
+        }
+      ],
+      "e_prescription": null,
+      "created_at": "2026-10-21T19:26:19.000000Z",
+      "updated_at": "2026-10-22T00:37:58.000000Z"
+    },
+    {
+      "id": 33973,
+      "facility_code": "0121996",
+      "medical_institution_code": "1310121996",
+      "institution_type": {
+        "code": 2,
+        "label": "診療所"
+      },
+      "status": {
+        "code": 1,
+        "label": "指定中"
+      },
+      "bureau": {
+        "code": 3,
+        "label": "関東信越厚生局"
+      },
+      "name": "農林水産省診療所",
+      "name_kana": "ノウリンスイサンショウシンリョウジョ",
+      "prefecture_code": "13",
+      "prefecture": {
+        "code": "13",
+        "label": "東京都"
+      },
+      "municipality": {
+        "code": "13101",
+        "label": "千代田区"
+      },
+      "postal_code": "100-0013",
+      "address": "千代田区霞が関一丁目２番１号",
+      "location": null,
+      "phone_number": "03-3501-6372",
+      "website_url": null,
+      "designated_on": "1957-11-01",
+      "designation_history": [
+        {
+          "date": "2023-11-01",
+          "reason": null
+        }
+      ],
+      "bed_counts": null,
+      "department_categories": [
+        {
+          "code": 1,
+          "label": "内科"
+        },
+        {
+          "code": 15,
+          "label": "歯科"
+        }
+      ],
+      "e_prescription": null,
+      "created_at": "2026-10-21T19:26:19.000000Z",
+      "updated_at": "2026-10-22T00:37:58.000000Z"
+    }
+  ],
+  "links": {
+    "first": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=1",
+    "last": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=3333",
+    "prev": null,
+    "next": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 3334,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "page": null,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=1",
+        "label": "1",
+        "page": 1,
+        "active": true
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=2",
+        "label": "2",
+        "page": 2,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=3",
+        "label": "3",
+        "page": 3,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=4",
+        "label": "4",
+        "page": 4,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=5",
+        "label": "5",
+        "page": 5,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=6",
+        "label": "6",
+        "page": 6,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=7",
+        "label": "7",
+        "page": 7,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=8",
+        "label": "8",
+        "page": 8,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=9",
+        "label": "9",
+        "page": 9,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=10",
+        "label": "10",
+        "page": 10,
+        "active": false
+      },
+      {
+        "url": null,
+        "label": "...",
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=3333",
+        "label": "3333",
+        "page": 3333,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=3334",
+        "label": "3334",
+        "page": 3334,
+        "active": false
+      },
+      {
+        "url": "http://localhost:8000/api/v1/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped&page=2",
+        "label": "Next &raquo;",
+        "page": 2,
+        "active": false
+      }
+    ],
+    "path": "http://localhost:8000/api/v1/medical-facilities",
+    "per_page": 3,
+    "to": 3,
+    "total": 10001,
+    "max_page": 3333,
+    "total_is_capped": true,
+    "attribution": {
+      "notice": "本APIのデータは、各地方厚生局が公開する「保険医療機関・保険薬局の指定一覧」を加工して作成しています。",
+      "license": {
+        "name": "公共データ利用規約（第1.0版）",
+        "url": "https://www.digital.go.jp/resources/open_data/public_data_license_v1.0"
+      },
+      "disclaimer": "データの正確性・完全性は保証しません。最新かつ正確な情報は、各地方厚生局の公表資料を確認してください。",
+      "address_source": {
+        "name": "アドレス・ベース・レジストリ（デジタル庁）の市区町村・町字・住居表示・地番の各マスターと位置参照データを加工して作成",
+        "url": "https://catalog.registries.digital.go.jp/rc/dataset/"
+      },
+      "medical_info_net_source": {
+        "name": "厚生労働省「医療情報ネット」のオープンデータ（所在地座標・診療時間・休診日・フリガナ・ホームページ）を加工して作成",
+        "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/newpage_43373.html"
+      },
+      "national_land_source": {
+        "name": "「国土数値情報（医療機関データ）」（国土交通省）を加工して作成",
+        "url": "https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P04-2020.html"
+      },
+      "population_source": {
+        "name": "総務省「住民基本台帳に基づく人口、人口動態及び世帯数」（市区町村別）を加工して作成",
+        "url": "https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html"
+      },
+      "e_prescription_source": {
+        "name": "厚生労働省「電子処方せん対応の医療機関・薬局リスト」を加工して作成",
+        "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/denshishohousen_taioushisetsu.html"
+      },
+      "holiday_source": {
+        "name": "内閣府「国民の祝日について」の祝日一覧（CSV）を加工して作成",
+        "url": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html"
+      },
+      "sources": [
+        {
+          "bureau": "北海道厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/hokkaido/gyomu/gyomu/hoken_kikan/code_ichiran.html"
+        },
+        {
+          "bureau": "東北厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/tohoku/gyomu/gyomu/hoken_kikan/itiran.html"
+        },
+        {
+          "bureau": "関東信越厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/kantoshinetsu/chousa/shitei.html"
+        },
+        {
+          "bureau": "東海北陸厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/tokaihokuriku/newpage_00287.html"
+        },
+        {
+          "bureau": "近畿厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/kinki/tyousa/shinkishitei.html"
+        },
+        {
+          "bureau": "中国四国厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/chugokushikoku/chousaka/iryoukikanshitei.html"
+        },
+        {
+          "bureau": "四国厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/shikoku/gyomu/gyomu/hoken_kikan/shitei/index.html"
+        },
+        {
+          "bureau": "九州厚生局",
+          "url": "https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00006.html"
+        }
+      ]
+    }
+  }
+}

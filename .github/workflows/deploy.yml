@@ -16,7 +16,12 @@ concurrency:
 
 # Actions are pinned to commit SHAs (tags can be moved); Dependabot keeps them updated.
 jobs:
+  # Lint, typecheck and the end-to-end tests: nothing is published unless they pass.
+  test:
+    uses: ./.github/workflows/test.yml
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -33,10 +38,6 @@ jobs:
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
       - run: npm ci
-
-      - run: npm run lint
-
-      - run: npm run typecheck
 
       - run: npm run build
         env:
