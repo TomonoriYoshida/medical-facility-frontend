@@ -44,14 +44,17 @@ export default function Pagination({ meta, hrefForPage }: Props) {
   return (
     <nav aria-label="ページ送り" className="mt-8 space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <StepLink href={current > 1 ? hrefForPage(current - 1) : null} label="前のページへ">
-          ‹<span className="hidden sm:inline"> 前へ</span>
+        <StepLink href={current > 1 ? hrefForPage(current - 1) : null}>
+          <span aria-hidden="true">‹</span>
+          {/* Read out, and shown from sm: the name a voice command can say. */}
+          <span className="sr-only sm:not-sr-only sm:ml-1">前へ</span>
         </StepLink>
         {/* Two pages either side on wider screens, one on phones to fit the width. */}
         <PageNumbers className="hidden sm:flex" current={current} last={lastReachablePage} siblings={2} hrefForPage={hrefForPage} />
         <PageNumbers className="flex sm:hidden" current={current} last={lastReachablePage} siblings={1} hrefForPage={hrefForPage} />
-        <StepLink href={current < lastReachablePage ? hrefForPage(current + 1) : null} label="次のページへ">
-          <span className="hidden sm:inline">次へ </span>›
+        <StepLink href={current < lastReachablePage ? hrefForPage(current + 1) : null}>
+          <span className="sr-only sm:not-sr-only sm:mr-1">次へ</span>
+          <span aria-hidden="true">›</span>
         </StepLink>
       </div>
 
@@ -86,10 +89,15 @@ export default function Pagination({ meta, hrefForPage }: Props) {
 
 const boxClass = "inline-flex h-9 min-w-9 items-center justify-center rounded-sm border px-2 text-sm";
 
-function StepLink({ href, label, children }: { href: string | null; label: string; children: ReactNode }) {
+/**
+ * The visible words are the link's name (no aria-label over them), so that a
+ * voice command saying what is on screen finds it. A step that goes nowhere
+ * stays in muted text but at full opacity, which keeps it readable.
+ */
+function StepLink({ href, children }: { href: string | null; children: ReactNode }) {
   if (href === null) {
     return (
-      <span aria-hidden="true" className={`${boxClass} border-border text-muted opacity-60 sm:px-4`}>
+      <span aria-hidden="true" className={`${boxClass} border-border text-muted sm:px-4`}>
         {children}
       </span>
     );
@@ -98,7 +106,6 @@ function StepLink({ href, label, children }: { href: string | null; label: strin
     <Link
       href={href}
       rel="nofollow"
-      aria-label={label}
       className={`${boxClass} border-accent font-bold text-accent transition-colors hover:bg-band sm:px-4`}
     >
       {children}
@@ -137,7 +144,7 @@ function PageNumbers({
                 href={hrefForPage(item.page)}
                 // Each page is just another view of the same search; keep crawlers from walking them.
                 rel="nofollow"
-                aria-label={`${item.page}ページ目へ`}
+                aria-label={`${numberFormatter.format(item.page)}ページ目へ`}
                 className={`${boxClass} border-border text-foreground transition-colors hover:border-accent hover:text-accent`}
               >
                 {numberFormatter.format(item.page)}

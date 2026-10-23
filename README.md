@@ -34,6 +34,38 @@ mv ../medical-facility-master-api-laravel/storage/app/openapi.json openapi/opena
 docker compose exec app npm run generate:api
 ```
 
+## 画面のテスト
+
+[Playwright](https://playwright.dev/) で、ビルドした画面をブラウザで動かして確かめます（`e2e/`）。PR のたびと、`main` へのデプロイの前に GitHub Actions（`.github/workflows/test.yml`）で動きます。テストが通らなければデプロイしません。
+
+- APIは本物を呼ばず、テスト用の固定データ（`e2e/fixtures/`）で答えます。テスト用のビルドはAPIのオリジンをダミーの `http://api.test` にし、その通信をテストが受けます。地図タイルなど外部への通信は止めます。
+- 時刻は 2026-10-05（月）10:30（日本時間）に固定します（「今日」の列などが日によって変わらないように）。
+- 想定していないAPIが呼ばれると、テストは失敗します。新しいAPIを使うときは、`e2e/support.ts` に固定データの応答を加えます。
+- 検索画面と施設詳細は、axe でアクセシビリティも確かめます（重大な問題があれば失敗）。
+
+```bash
+# テスト用にビルドする
+docker run --rm --network host -u "$(id -u):$(id -g)" -e npm_config_cache=/tmp/.npm -v "$PWD":/app -w /app node:22-alpine npm run build:e2e
+# テストする（ブラウザ入りの Playwright のイメージで）
+docker run --rm --network host --ipc=host -u "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD":/app -w /app mcr.microsoft.com/playwright:v1.58.0-noble npm run test:e2e
+```
+
+- イメージの版（`v1.58.0`）は、`package.json` の `@playwright/test` と合わせます。上げるときは、ここと `.github/workflows/test.yml`（イメージのタグと `PLAYWRIGHT_IMAGE_VERSION`）も一緒に上げます。ずれていると CI の最初の手順で失敗します。
+- 失敗したテストの記録は `test-results/` に残ります（`npx playwright show-trace <trace.zip>` で再生できます）。CI では成果物 `playwright-report` に入ります。
+
+### 固定データを作り直す
+
+`e2e/fixtures/*.json` は、ローカルのAPIの実際の応答です。APIの形が変わったら、ローカルのAPIを最新にしてから取り直します。施設は、時間帯が2つあり、受付時間と第n週の休みがあるもの（鈴森内科クリニック）を使っています。IDが変わった場合は、`facility` と同じ施設のIDに置き換えます。
+
+```bash
+B=http://localhost:8000/api/v1; ID=33987
+curl -s "$B/options" > e2e/fixtures/options.json
+curl -s "$B/medical-facilities?per_page=3&prefecture_code=13&institution_type=2&status=1&total=capped" > e2e/fixtures/facility-list.json
+curl -s "$B/medical-facilities/$ID" > e2e/fixtures/facility.json
+curl -s "$B/medical-facilities/$ID/opening-hours" > e2e/fixtures/opening-hours.json
+curl -s "$B/medical-facilities/$ID/events" > e2e/fixtures/facility-events.json
+```
+
 ## デプロイ
 
 `main` へのpushでGitHub Pagesにデプロイされます。APIのオリジンは、リポジトリ変数 `API_ORIGIN` に設定しています（現在は `https://168-110-42-30.sslip.io`。末尾の `/` と `/api` は付けない）。
