@@ -39,6 +39,11 @@ jobs:
 
       - run: npm ci
 
+      # deploy.yml installs with Node 22's npm 10, which rejects a lock file
+      # written by this image's newer npm; catch that before merging.
+      - name: Check the lock file installs with npm 10 (as deploy.yml does)
+        run: npx --yes npm@10 ci --dry-run --ignore-scripts --no-audit --no-fund
+
       - run: npm run lint
 
       - run: npm run typecheck

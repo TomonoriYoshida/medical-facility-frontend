@@ -51,6 +51,7 @@ docker run --rm --network host --ipc=host -u "$(id -u):$(id -g)" -e HOME=/tmp -v
 ```
 
 - イメージの版（`v1.58.0`）は、`package.json` の `@playwright/test` と合わせます。上げるときは、ここと `.github/workflows/test.yml`（イメージのタグと `PLAYWRIGHT_IMAGE_VERSION`）も一緒に上げます。ずれていると CI の最初の手順で失敗します。
+- 依存関係を追加・更新するときは、`node:22-alpine`（npm 10）で `npm install` してください。デプロイ（`deploy.yml`）は Node 22 の npm 10 で `npm ci` するため、Playwright のイメージ（npm 11）で書いた lockfile は通らないことがあります（CI の確認で失敗します）。
 - 失敗したテストの記録は `test-results/` に残ります（`npx playwright show-trace <trace.zip>` で再生できます）。CI では成果物 `playwright-report` に入ります。
 
 ### 固定データを作り直す
